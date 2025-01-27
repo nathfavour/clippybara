@@ -33,8 +33,6 @@ class BluetoothService {
     // Implement data sending over Bluetooth
   }
 }
-import 'package:flutter_bluetooth_serial/flutter_bluetooth_serial.dart';
-import '../models/clipboard_data.dart';
 
 class BluetoothService {
   final FlutterBluetoothSerial _bluetooth = FlutterBluetoothSerial.instance;

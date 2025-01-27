@@ -37,7 +37,6 @@ class WifiService {
     // Implement data sending over WiFi
   }
 }
-import 'package:wifi_iot/wifi_iot.dart';
 
 class WifiService {
   Future<bool> connectToWifi(String ssid, String password) async {

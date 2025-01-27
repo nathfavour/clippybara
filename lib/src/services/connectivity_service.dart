@@ -1,6 +1,5 @@
 import 'package:nearby_connections/nearby_connections.dart';
 import '../models/clipboard_data.dart';
-import '../utils/helpers.dart';
 
 class ConnectivityService {
   final Strategy _strategy = Strategy.P2P_CLUSTER;
