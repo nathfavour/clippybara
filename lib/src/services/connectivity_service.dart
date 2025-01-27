@@ -1,4 +1,6 @@
 import 'package:nearby_connections/nearby_connections.dart';
+import '../models/clipboard_data.dart';
+import '../utils/helpers.dart';
 
 class ConnectivityService {
   final Strategy _strategy = Strategy.P2P_CLUSTER;
@@ -12,7 +14,15 @@ class ConnectivityService {
     // Implement discovery stop
   }
 
-  Future<void> sendData(String deviceId, String data) async {
+  Future<void> sendData(ClipboardData data) async {
     // Implement data sending
+  }
+
+  Future<void> startWifiSharing() async {
+    // Implement WiFi sharing setup
+  }
+
+  Future<void> stopWifiSharing() async {
+    // Implement WiFi sharing teardown
   }
 }

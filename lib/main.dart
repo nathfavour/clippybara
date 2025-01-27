@@ -2,9 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'src/views/home_page.dart';
 import 'src/controllers/clipboard_controller.dart';
+import 'src/utils/helpers.dart';
 
-void main() {
+void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  bool permissionsGranted = await Helpers.requestPermissions();
+  if (!permissionsGranted) {
+    // Handle permissions not granted
+  }
   Get.put(ClipboardController());
   runApp(const ClipybaraApp());
 }
