@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../controllers/clipboard_controller.dart';
+import '../views/settings_page.dart';
 
 class HomePage extends StatelessWidget {
   const HomePage({super.key});

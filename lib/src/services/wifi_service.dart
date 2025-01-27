@@ -37,28 +37,3 @@ class WifiService {
     // Implement data sending over WiFi
   }
 }
-
-class WifiService {
-  Future<bool> connectToWifi(String ssid, String password) async {
-    try {
-      await WiFiForIoTPlugin.disconnect();
-      await WiFiForIoTPlugin.connect(
-        ssid,
-        password: password,
-        security: NetworkSecurity.WPA,
-      );
-      return true;
-    } catch (e) {
-      // Handle connection error
-      return false;
-    }
-  }
-
-  Future<void> disconnectWifi() async {
-    await WiFiForIoTPlugin.disconnect();
-  }
-
-  Future<List<WifiNetwork>> getAvailableNetworks() async {
-    return await WiFiForIoTPlugin.loadWifiList();
-  }
-}

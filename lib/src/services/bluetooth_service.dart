@@ -33,28 +33,3 @@ class BluetoothService {
     // Implement data sending over Bluetooth
   }
 }
-
-class BluetoothService {
-  final FlutterBluetoothSerial _bluetooth = FlutterBluetoothSerial.instance;
-
-  Future<List<BluetoothDevice>> getPairedDevices() async {
-    return await _bluetooth.getBondedDevices();
-  }
-
-  Future<void> connectToDevice(BluetoothDevice device) async {
-    try {
-      var connection = await BluetoothConnection.toAddress(device.address);
-      // Handle connection
-    } catch (e) {
-      // Handle connection error
-    }
-  }
-
-  Future<void> disconnect() async {
-    await _bluetooth.disconnect();
-  }
-
-  Future<void> sendData(ClipboardData data) async {
-    // Implement data sending over Bluetooth
-  }
-}
