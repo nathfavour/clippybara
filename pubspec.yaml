@@ -37,7 +37,7 @@ dependencies:
   get: ^4.6.5
   permission_handler: ^10.2.0
   nearby_connections: ^3.0.1
-  wifi_iot: ^0.3.20
+  wifi_iot: ^0.3.19+1
 
 dev_dependencies:
   flutter_test:
