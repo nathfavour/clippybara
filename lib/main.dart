@@ -3,13 +3,21 @@ import 'package:get/get.dart';
 import 'src/views/home_page.dart';
 import 'src/controllers/clipboard_controller.dart';
 import 'src/utils/helpers.dart';
+import 'dart:io' show Platform;
+import 'package:flutter/foundation.dart' show kIsWeb;
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  bool permissionsGranted = await Helpers.requestPermissions();
-  if (!permissionsGranted) {
-    // Handle permissions not granted
+  bool permissionsGranted = false;
+
+  if (!kIsWeb && (Platform.isAndroid || Platform.isIOS)) {
+    permissionsGranted = await Helpers.requestPermissions();
+    if (!permissionsGranted) {
+      // Handle permissions not granted, possibly exit the app or show a dialog
+      exit(0);
+    }
   }
+
   Get.put(ClipboardController());
   runApp(const ClipybaraApp());
 }

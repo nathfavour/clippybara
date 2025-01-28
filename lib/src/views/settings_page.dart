@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import '../../widgets/custom_widget.dart';
 import '../controllers/clipboard_controller.dart';
 
 class SettingsPage extends StatelessWidget {
@@ -13,19 +14,29 @@ class SettingsPage extends StatelessWidget {
       appBar: AppBar(
         title: const Text('Settings'),
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          children: [
-            Obx(() => SwitchListTile(
-                  title: const Text('Use WiFi for Sync'),
-                  value: controller.useWifi,
-                  onChanged: (value) {
-                    controller.setUseWifi(value);
-                  },
-                )),
-          ],
-        ),
+      body: LayoutBuilder(
+        builder: (context, constraints) {
+          return Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Center(
+              child: ConstrainedBox(
+                constraints: BoxConstraints(maxWidth: 600),
+                child: Column(
+                  children: [
+                    CustomSwitchTile(
+                      title: 'Use WiFi for Sync',
+                      value: controller.useWifi,
+                      onChanged: (value) {
+                        controller.setUseWifi(value);
+                      },
+                    ),
+                    // Add more settings here if needed
+                  ],
+                ),
+              ),
+            ),
+          );
+        },
       ),
     );
   }
