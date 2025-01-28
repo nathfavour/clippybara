@@ -3,7 +3,7 @@ import 'package:get/get.dart';
 import 'src/views/home_page.dart';
 import 'src/controllers/clipboard_controller.dart';
 import 'src/utils/helpers.dart';
-import 'dart:io' show Platform;
+import 'dart:io' show Platform, exit;
 import 'package:flutter/foundation.dart' show kIsWeb;
 
 void main() async {
