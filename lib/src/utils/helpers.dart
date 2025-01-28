@@ -2,12 +2,7 @@ import 'package:permission_handler/permission_handler.dart';
 
 class Helpers {
   static Future<bool> requestPermissions() async {
-    var status = await Permission.bluetooth.request();
-    if (!status.isGranted) {
-      return false;
-    }
-
-    status = await Permission.location.request();
+    var status = await Permission.location.request();
     if (!status.isGranted) {
       return false;
     }

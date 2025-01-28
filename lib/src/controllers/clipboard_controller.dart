@@ -1,6 +1,6 @@
 import 'package:get/get.dart';
 import '../services/connectivity_service.dart';
-import '../services/bluetooth_service.dart';
+// import '../services/bluetooth_service.dart'; // Removed import
 import '../services/wifi_service.dart';
 import '../models/clipboard_data.dart';
 
@@ -9,26 +9,26 @@ class ClipboardController extends GetxController {
   final _connectedDevices = <String>[].obs;
   final _isSharing = false.obs;
   final _useWifi = false.obs;
-  final _useBluetooth = false.obs;
+  // final _useBluetooth = false.obs; // Removed
 
   final ConnectivityService _connectivityService = ConnectivityService();
-  final BluetoothService _bluetoothService = BluetoothService();
+  // final BluetoothService _bluetoothService = BluetoothService(); // Removed
   final WifiService _wifiService = WifiService();
 
   String get clipboardContent => _clipboardContent.value;
   List<String> get connectedDevices => _connectedDevices;
   bool get isSharing => _isSharing.value;
   bool get useWifi => _useWifi.value;
-  bool get useBluetooth => _useBluetooth.value;
+  // bool get useBluetooth => _useBluetooth.value; // Removed
 
   Future<void> startSharing() async {
     _isSharing.value = true;
     if (_useWifi.value) {
       await _connectivityService.startWifiSharing();
     }
-    if (_useBluetooth.value) {
-      await _bluetoothService.startBluetoothSharing();
-    }
+    // if (_useBluetooth.value) {
+    //   await _bluetoothService.startBluetoothSharing();
+    // }
   }
 
   Future<void> stopSharing() async {
@@ -36,18 +36,18 @@ class ClipboardController extends GetxController {
     if (_useWifi.value) {
       await _connectivityService.stopWifiSharing();
     }
-    if (_useBluetooth.value) {
-      await _bluetoothService.stopBluetoothSharing();
-    }
+    // if (_useBluetooth.value) {
+    //   await _bluetoothService.stopBluetoothSharing();
+    // }
   }
 
   Future<void> sendClipboardData(ClipboardData data) async {
     if (_useWifi.value) {
       await _connectivityService.sendData(data);
     }
-    if (_useBluetooth.value) {
-      await _bluetoothService.sendData(data);
-    }
+    // if (_useBluetooth.value) {
+    //   await _bluetoothService.sendData(data);
+    // }
   }
 
   void updateClipboardContent(String content) {
@@ -58,7 +58,7 @@ class ClipboardController extends GetxController {
     _useWifi.value = value;
   }
 
-  void setUseBluetooth(bool value) {
-    _useBluetooth.value = value;
-  }
+  // void setUseBluetooth(bool value) {
+  //   _useBluetooth.value = value;
+  // }
 }

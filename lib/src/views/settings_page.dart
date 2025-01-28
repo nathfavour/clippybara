@@ -24,13 +24,6 @@ class SettingsPage extends StatelessWidget {
                     controller.setUseWifi(value);
                   },
                 )),
-            Obx(() => SwitchListTile(
-                  title: const Text('Use Bluetooth for Sync'),
-                  value: controller.useBluetooth,
-                  onChanged: (value) {
-                    controller.setUseBluetooth(value);
-                  },
-                )),
           ],
         ),
       ),
