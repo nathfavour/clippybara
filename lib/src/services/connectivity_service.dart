@@ -29,7 +29,7 @@ class ConnectivityService {
   }
 
   Future<void> stopDiscovery() async {
-    await _mdnsClient?.stop();
+    _mdnsClient?.stop();
     _mdnsClient = null;
   }
 
