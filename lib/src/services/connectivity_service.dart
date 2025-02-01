@@ -23,7 +23,7 @@ class ConnectivityService {
     }
   }
 
-  Future<void> sendData(ClipboardItem data) async {
+  Future<void> sendData(ClipboardData data) async {
     if (Platform.isAndroid || Platform.isIOS) {
       // Implement data sending for mobile platforms
     } else {
