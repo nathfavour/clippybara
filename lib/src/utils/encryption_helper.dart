@@ -1,4 +1,4 @@
-import 'dart:convert';
+import 'dart:typed_data';
 import 'package:encrypt/encrypt.dart';
 
 class EncryptionHelper {
@@ -13,13 +13,13 @@ class EncryptionHelper {
     _encrypter = Encrypter(AES(_encryptionKey));
   }
 
-  Future<List<int>> encrypt(String data) async {
+  Future<Uint8List> encrypt(String data) async {
     final encrypted = _encrypter.encrypt(data, iv: _iv);
     return encrypted.bytes;
   }
 
   Future<String> decrypt(List<int> data) async {
-    final encrypted = Encrypted(data);
+    final encrypted = Encrypted(Uint8List.fromList(data));
     return _encrypter.decrypt(encrypted, iv: _iv);
   }
 }
