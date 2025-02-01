@@ -34,7 +34,8 @@ class HomePage extends StatelessWidget {
               if (constraints.maxWidth > 600) {
                 return _buildTabletLayout(controller, theme);
               } else {
-                return _buildMobileLayout(controller, theme);
+                // Pass context to the mobile layout builder
+                return _buildMobileLayout(context, controller, theme);
               }
             },
           ),
@@ -112,31 +113,34 @@ class HomePage extends StatelessWidget {
     );
   }
 
-  Widget _buildMobileLayout(ClipboardController controller, ThemeData theme) {
-    return DefaultTabController(
-      length: 2,
-      child: Column(
-        mainAxisSize:
-            MainAxisSize.min, // allow the column to shrink-wrap its children
-        children: [
-          TabBar(
-            tabs: const [
-              Tab(text: 'Clipboard'),
-              Tab(text: 'Devices'),
-            ],
-            labelStyle: theme.textTheme.titleMedium,
-          ),
-          Flexible(
-            // use Flexible with loose fit instead of Expanded
-            fit: FlexFit.loose,
-            child: TabBarView(
-              children: [
-                _buildClipboardSection(controller, theme),
-                _buildDeviceSection(controller, theme),
+  Widget _buildMobileLayout(
+      BuildContext context, ClipboardController controller, ThemeData theme) {
+    return SizedBox(
+      height: MediaQuery.of(context).size.height *
+          0.7, // Adjust the height as needed
+      child: DefaultTabController(
+        length: 2,
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            TabBar(
+              tabs: const [
+                Tab(text: 'Clipboard'),
+                Tab(text: 'Devices'),
               ],
+              labelStyle: theme.textTheme.titleMedium,
             ),
-          ),
-        ],
+            Flexible(
+              fit: FlexFit.loose,
+              child: TabBarView(
+                children: [
+                  _buildClipboardSection(controller, theme),
+                  _buildDeviceSection(controller, theme),
+                ],
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
