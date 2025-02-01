@@ -36,7 +36,12 @@ class NetworkCoordinator {
   Future<void> startServer() async {
     for (int port = _basePort; port < _basePort + _maxPortScan; port++) {
       try {
-        _serverSocket = await ServerSocket.bind(InternetAddress.anyIPv4, port);
+        _serverSocket = await ServerSocket.bind(
+          InternetAddress.anyIPv4,
+          port,
+          reuseAddress: true,
+          reusePort: false, // Explicitly disable reusePort
+        );
         print('Server started on port $port');
         _listenToConnections();
         break;
