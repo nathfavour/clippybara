@@ -179,7 +179,7 @@ class HomePage extends StatelessWidget {
             style: theme.textTheme.titleMedium,
           ),
           const SizedBox(height: 8),
-          Container(
+          SizedBox(
             height: 300,
             child: Obx(() => ListView.builder(
                   shrinkWrap: true,
