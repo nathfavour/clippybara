@@ -42,13 +42,3 @@ android {
 flutter {
     source = "../.."
 }
-
-subprojects {
-    afterEvaluate { project ->
-        if (project.name.contains("nearby_connections") && project.hasProperty("android")) {
-            project.android {
-                namespace "com.clippybara.nearby_connections"
-            }
-        }
-    }
-}
