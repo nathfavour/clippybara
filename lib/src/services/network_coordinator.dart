@@ -1,6 +1,8 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
+import 'package:flutter/foundation.dart';
+
 import '../models/network_info.dart';
 import '../models/device_info.dart';
 import '../models/clipboard_data.dart';
@@ -41,7 +43,9 @@ class NetworkCoordinator {
           port,
           // removed unsupported name parameters
         );
-        print('Server started on port $port');
+        if (kDebugMode) {
+          print('Server started on port $port');
+        }
         _listenToConnections();
         break;
       } catch (e) {
