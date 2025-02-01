@@ -1,7 +1,8 @@
 import 'package:wifi_iot/wifi_iot.dart';
 import '../models/clipboard_data.dart';
 import 'dart:convert';
-import 'dart:io' show Platform, InternetAddress, Socket;
+// Modified import to include ServerSocket
+import 'dart:io' show Platform, InternetAddress, Socket, ServerSocket;
 
 class WifiService {
   Socket? _serverSocket;
@@ -45,7 +46,7 @@ class WifiService {
   Future<void> startWifiSharing() async {
     try {
       final server = await ServerSocket.bind(InternetAddress.anyIPv4, _port);
-      _serverSocket = server;
+      _serverSocket = server as Socket?;
 
       server.listen((socket) {
         _clientSockets.add(socket);
