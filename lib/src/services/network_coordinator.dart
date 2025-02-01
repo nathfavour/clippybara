@@ -39,8 +39,6 @@ class NetworkCoordinator {
         _serverSocket = await ServerSocket.bind(
           InternetAddress.anyIPv4,
           port,
-          reusePort:
-              false, // Explicitly disable reusePort; removed unsupported reuseAddress
         );
         print('Server started on port $port');
         _listenToConnections();
