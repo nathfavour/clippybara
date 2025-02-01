@@ -28,6 +28,36 @@ class SettingsPage extends StatelessWidget {
                     children: [
                       _buildSection(
                         theme,
+                        'Appearance',
+                        [
+                          ListTile(
+                            title: Text('Theme Mode'),
+                            trailing: DropdownButton<ThemeMode>(
+                              value: Get.isDarkMode
+                                  ? ThemeMode.dark
+                                  : ThemeMode.light,
+                              items: [
+                                DropdownMenuItem(
+                                  value: ThemeMode.light,
+                                  child: Text('Light'),
+                                ),
+                                DropdownMenuItem(
+                                  value: ThemeMode.dark,
+                                  child: Text('Dark'),
+                                ),
+                              ],
+                              onChanged: (ThemeMode? mode) {
+                                if (mode != null) {
+                                  Get.changeThemeMode(mode);
+                                }
+                              },
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 24),
+                      _buildSection(
+                        theme,
                         'Sync Settings',
                         [
                           CustomSwitchTile(

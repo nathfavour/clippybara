@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'src/views/home_page.dart';
 import 'src/controllers/clipboard_controller.dart';
 import 'src/utils/helpers.dart';
+import 'package:clippybara/theme/app_theme.dart';
 import 'dart:io' show Platform, exit;
 import 'package:flutter/foundation.dart' show kIsWeb;
 
@@ -29,10 +30,9 @@ class ClipybaraApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return GetMaterialApp(
       title: 'Clipybara',
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-        useMaterial3: true,
-      ),
+      theme: AppTheme.lightTheme,
+      darkTheme: AppTheme.darkTheme,
+      themeMode: ThemeMode.system, // Supports fast live theme switching
       home: const HomePage(),
     );
   }

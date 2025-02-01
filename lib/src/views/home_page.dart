@@ -4,6 +4,7 @@ import '../controllers/clipboard_controller.dart';
 import '../views/settings_page.dart';
 import '../../widgets/custom_widget.dart';
 import '../models/clipboard_data.dart';
+import '../../widgets/clipboard_card.dart';
 
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
@@ -23,6 +24,10 @@ class HomePage extends StatelessWidget {
           ),
         ],
       ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () => _showCreateClipDialog(context, controller),
+        child: const Icon(Icons.add),
+      ),
       body: LayoutBuilder(
         builder: (context, constraints) {
           if (constraints.maxWidth > 600) {
@@ -31,6 +36,41 @@ class HomePage extends StatelessWidget {
             return _buildMobileLayout(controller, theme);
           }
         },
+      ),
+    );
+  }
+
+  void _showCreateClipDialog(
+      BuildContext context, ClipboardController controller) {
+    final textController = TextEditingController();
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Create New Clip'),
+        content: TextField(
+          controller: textController,
+          maxLines: 5,
+          decoration: const InputDecoration(
+            hintText: 'Enter text to share...',
+            border: OutlineInputBorder(),
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('Cancel'),
+          ),
+          ElevatedButton(
+            onPressed: () {
+              if (textController.text.isNotEmpty) {
+                controller.addClipboardItem(textController.text);
+                controller.shareWithConnectedDevices(textController.text);
+                Navigator.pop(context);
+              }
+            },
+            child: const Text('Share'),
+          ),
+        ],
       ),
     );
   }
@@ -115,21 +155,12 @@ class HomePage extends StatelessWidget {
                   itemCount: controller.clipboardHistory.length,
                   itemBuilder: (context, index) {
                     final item = controller.clipboardHistory[index];
-                    return Card(
-                      child: ListTile(
-                        title: Text(
-                          item.content,
-                          maxLines: 2,
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                        subtitle: Text(_formatDateTime(item.timestamp)),
-                        trailing: IconButton(
-                          icon: const Icon(Icons.copy),
-                          onPressed: () {
-                            // Implement copy to clipboard
-                          },
-                        ),
-                      ),
+                    return ClipboardCard(
+                      item: item,
+                      onCopy: () => controller.copyToClipboard(item.content),
+                      onShare: () =>
+                          controller.shareWithConnectedDevices(item.content),
+                      onDelete: () => controller.removeFromHistory(index),
                     );
                   },
                 )),
