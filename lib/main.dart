@@ -30,7 +30,7 @@ class ClipybaraApp extends StatelessWidget {
       theme: AppTheme.lightTheme,
       darkTheme: AppTheme.darkTheme,
       themeMode: ThemeMode.system, // Supports fast live theme switching
-      home: const HomePage(),
+      home: const SafeArea(child: HomePage()),
     );
   }
 }

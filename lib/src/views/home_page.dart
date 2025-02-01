@@ -171,8 +171,11 @@ class HomePage extends StatelessWidget {
             style: theme.textTheme.titleMedium,
           ),
           const SizedBox(height: 8),
-          Expanded(
+          Container(
+            height: 300,
             child: Obx(() => ListView.builder(
+                  shrinkWrap: true,
+                  physics: const ClampingScrollPhysics(),
                   itemCount: controller.clipboardHistory.length,
                   itemBuilder: (context, index) {
                     final item = controller.clipboardHistory[index];
