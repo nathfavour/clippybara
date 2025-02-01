@@ -3,7 +3,7 @@ import 'package:flutter/services.dart';
 import '../services/connectivity_service.dart';
 import '../services/wifi_service.dart';
 import '../services/network_discovery_service.dart';
-import '../models/clipboard_data.dart';
+import '../models/clipboard_data.dart' as app;
 import '../utils/helpers.dart';
 import 'dart:async';
 import 'dart:io' show Platform;
@@ -16,7 +16,7 @@ class ClipboardController extends GetxController {
   final _syncEnabled = true.obs;
   final _autoConnect = true.obs;
   final _notificationsEnabled = true.obs;
-  final _clipboardHistory = <ClipboardData>[].obs;
+  final _clipboardHistory = <app.ClipboardItem>[].obs;
   final _lastSyncTime = Rx<DateTime?>(null);
 
   final NetworkDiscoveryService _discoveryService = NetworkDiscoveryService();
@@ -31,7 +31,7 @@ class ClipboardController extends GetxController {
   bool get syncEnabled => _syncEnabled.value;
   bool get autoConnect => _autoConnect.value;
   bool get notificationsEnabled => _notificationsEnabled.value;
-  List<ClipboardData> get clipboardHistory => _clipboardHistory;
+  List<app.ClipboardItem> get clipboardHistory => _clipboardHistory;
   DateTime? get lastSyncTime => _lastSyncTime.value;
 
   @override
@@ -75,11 +75,11 @@ class ClipboardController extends GetxController {
     }
   }
 
-  void _addToHistory(String content) {
-    final newData = ClipboardData(
+  void _addToHistory(String content) async {
+    final newData = app.ClipboardItem(
       content: content,
       timestamp: DateTime.now(),
-      deviceId: Helpers.getDeviceId(),
+      deviceId: await Helpers.getDeviceId(),
     );
     _clipboardHistory.insert(0, newData);
     if (_clipboardHistory.length > 50) {
@@ -89,13 +89,19 @@ class ClipboardController extends GetxController {
   }
 
   Future<void> _syncClipboard() async {
-    final data = ClipboardData(
+    final deviceId = await Helpers.getDeviceId();
+    final data = app.ClipboardItem(
       content: _clipboardContent.value,
       timestamp: DateTime.now(),
-      deviceId: Helpers.getDeviceId(),
+      deviceId: deviceId,
     );
 
-    await sendClipboardData(data);
+    if (_useWifi.value) {
+      await _wifiService.sendData(data);
+    }
+    if (Platform.isAndroid || Platform.isIOS) {
+      await _connectivityService.sendData(data);
+    }
     _lastSyncTime.value = DateTime.now();
   }
 
@@ -140,6 +146,14 @@ class ClipboardController extends GetxController {
       stopSharing();
     } else if (_autoConnect.value) {
       startSharing();
+    }
+  }
+
+  void setUseWifi(bool value) async {
+    _useWifi.value = value;
+    if (_isSharing.value) {
+      await stopSharing();
+      await startSharing();
     }
   }
 

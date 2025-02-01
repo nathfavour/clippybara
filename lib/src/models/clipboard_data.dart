@@ -1,9 +1,9 @@
-class ClipboardData {
+class ClipboardItem {
   final String content;
   final DateTime timestamp;
   final String deviceId;
 
-  ClipboardData({
+  ClipboardItem({
     required this.content,
     required this.timestamp,
     required this.deviceId,
@@ -15,7 +15,7 @@ class ClipboardData {
         'deviceId': deviceId,
       };
 
-  factory ClipboardData.fromJson(Map<String, dynamic> json) => ClipboardData(
+  factory ClipboardItem.fromJson(Map<String, dynamic> json) => ClipboardItem(
         content: json['content'],
         timestamp: DateTime.parse(json['timestamp']),
         deviceId: json['deviceId'],
