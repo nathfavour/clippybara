@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'package:network_info_plus/network_info_plus.dart';
 import 'package:multicast_dns/multicast_dns.dart';
 
 class NetworkDiscoveryService {

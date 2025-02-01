@@ -11,7 +11,6 @@ class AppTheme {
       primary: aquamarine,
       secondary: Colors.teal,
       surface: Colors.white,
-      background: Colors.grey[50]!,
     ),
     scaffoldBackgroundColor: Colors.white,
     appBarTheme: AppBarTheme(
@@ -38,8 +37,8 @@ class AppTheme {
       ),
     ),
     switchTheme: SwitchThemeData(
-      thumbColor: MaterialStateProperty.all(aquamarine),
-      trackColor: MaterialStateProperty.all(aquamarine.withOpacity(0.5)),
+      thumbColor: WidgetStateProperty.all(aquamarine),
+      trackColor: WidgetStateProperty.all(aquamarine.withOpacity(0.5)),
     ),
     floatingActionButtonTheme: FloatingActionButtonThemeData(
       backgroundColor: aquamarine,
@@ -66,7 +65,6 @@ class AppTheme {
       primary: aquamarine,
       secondary: Colors.tealAccent,
       surface: Colors.grey[900]!,
-      background: Colors.black,
     ),
     scaffoldBackgroundColor: Colors.black,
     appBarTheme: AppBarTheme(
@@ -93,8 +91,8 @@ class AppTheme {
       ),
     ),
     switchTheme: SwitchThemeData(
-      thumbColor: MaterialStateProperty.all(aquamarine),
-      trackColor: MaterialStateProperty.all(aquamarine.withOpacity(0.5)),
+      thumbColor: WidgetStateProperty.all(aquamarine),
+      trackColor: WidgetStateProperty.all(aquamarine.withOpacity(0.5)),
     ),
     floatingActionButtonTheme: FloatingActionButtonThemeData(
       backgroundColor: aquamarine,

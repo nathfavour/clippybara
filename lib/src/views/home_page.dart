@@ -2,8 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../controllers/clipboard_controller.dart';
 import '../views/settings_page.dart';
-import '../../widgets/custom_widget.dart';
-import '../models/clipboard_data.dart';
 import '../../widgets/clipboard_card.dart';
 
 class HomePage extends StatelessWidget {
@@ -16,7 +14,7 @@ class HomePage extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Clipybara'),
+        title: const Text('Clippybara'),
         actions: [
           IconButton(
             icon: const Icon(Icons.settings),

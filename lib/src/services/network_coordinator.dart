@@ -1,8 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
-import 'dart:math';
 import 'dart:io';
-import 'package:encrypt/encrypt.dart';
 import '../models/network_info.dart';
 import '../models/device_info.dart';
 import '../models/clipboard_data.dart';
