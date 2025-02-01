@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import '../controllers/clipboard_controller.dart';
 import '../views/settings_page.dart';
 import '../../widgets/clipboard_card.dart';
+import '../views/devices_page.dart';
 
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
@@ -26,14 +27,36 @@ class HomePage extends StatelessWidget {
         onPressed: () => _showCreateClipDialog(context, controller),
         child: const Icon(Icons.add),
       ),
-      body: LayoutBuilder(
-        builder: (context, constraints) {
-          if (constraints.maxWidth > 600) {
-            return _buildTabletLayout(controller, theme);
-          } else {
-            return _buildMobileLayout(controller, theme);
-          }
-        },
+      body: ListView(
+        children: [
+          LayoutBuilder(
+            builder: (context, constraints) {
+              if (constraints.maxWidth > 600) {
+                return _buildTabletLayout(controller, theme);
+              } else {
+                return _buildMobileLayout(controller, theme);
+              }
+            },
+          ),
+          const SizedBox(height: 20),
+          const Padding(
+            padding: EdgeInsets.symmetric(horizontal: 16.0),
+            child: Text(
+              'Devices',
+              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+            ),
+          ),
+          ListTile(
+            leading: const Icon(Icons.devices),
+            title: const Text("Discover Devices"),
+            subtitle:
+                const Text("Scan, connect, and add devices to your favorites."),
+            trailing: const Icon(Icons.arrow_forward_ios),
+            onTap: () {
+              Get.to(() => const DevicesPage());
+            },
+          ),
+        ],
       ),
     );
   }
