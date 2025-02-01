@@ -116,6 +116,8 @@ class HomePage extends StatelessWidget {
     return DefaultTabController(
       length: 2,
       child: Column(
+        mainAxisSize:
+            MainAxisSize.min, // allow the column to shrink-wrap its children
         children: [
           TabBar(
             tabs: const [
@@ -124,7 +126,9 @@ class HomePage extends StatelessWidget {
             ],
             labelStyle: theme.textTheme.titleMedium,
           ),
-          Expanded(
+          Flexible(
+            // use Flexible with loose fit instead of Expanded
+            fit: FlexFit.loose,
             child: TabBarView(
               children: [
                 _buildClipboardSection(controller, theme),
