@@ -34,7 +34,7 @@ class _DevicesPageState extends State<DevicesPage> {
     });
   }
 
-  void _startScanning() async {
+  Future<void> _startScanning() async {
     await _discoveryService.initialize();
   }
 
