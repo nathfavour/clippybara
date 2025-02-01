@@ -165,6 +165,32 @@ class ClipboardController extends GetxController {
     _clipboardHistory.clear();
   }
 
+  // Add missing public methods used by HomePage
+  void addClipboardItem(String text) async {
+    _clipboardContent.value = text;
+    _addToHistory(text);
+    if (_syncEnabled.value) {
+      await _syncClipboard();
+    }
+  }
+
+  void shareWithConnectedDevices(String text) async {
+    _clipboardContent.value = text;
+    if (_syncEnabled.value) {
+      await _syncClipboard();
+    }
+  }
+
+  void copyToClipboard(String text) {
+    Clipboard.setData(ClipboardData(text: text));
+  }
+
+  void removeFromHistory(int index) {
+    if (index >= 0 && index < _clipboardHistory.length) {
+      _clipboardHistory.removeAt(index);
+    }
+  }
+
   @override
   void onClose() {
     _clipboardCheckTimer?.cancel();
