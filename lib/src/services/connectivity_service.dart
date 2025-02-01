@@ -1,34 +1,41 @@
-import 'package:nearby_connections/nearby_connections.dart';
+import 'package:network_info_plus/network_info_plus.dart';
+import 'package:multicast_dns/multicast_dns.dart';
 import '../models/clipboard_data.dart';
 import 'dart:io' show Platform;
 
 class ConnectivityService {
-  final Strategy _strategy = Strategy.P2P_CLUSTER;
   final String _serviceId = 'com.clipybara.sync';
+  final NetworkInfo _networkInfo = NetworkInfo();
+  MDnsClient? _mdnsClient;
 
   Future<void> startDiscovery() async {
     if (Platform.isAndroid || Platform.isIOS) {
-      // Implement device discovery for mobile platforms
-    } else {
-      // Desktop platforms might use different mechanisms
-      // Implement desktop-specific discovery or show a message
+      try {
+        _mdnsClient = MDnsClient();
+        await _mdnsClient!.start();
+        await _startServiceDiscovery();
+      } catch (e) {
+        print('Error starting discovery: $e');
+      }
+    }
+  }
+
+  Future<void> _startServiceDiscovery() async {
+    await for (final PtrResourceRecord ptr in _mdnsClient!
+        .lookup<PtrResourceRecord>(
+            ResourceRecordQuery.serverPointer('_clipybara._tcp.local'))) {
+      print('Found device: ${ptr.domainName}');
     }
   }
 
   Future<void> stopDiscovery() async {
-    if (Platform.isAndroid || Platform.isIOS) {
-      // Implement discovery stop for mobile platforms
-    } else {
-      // Handle desktop platforms
-    }
+    await _mdnsClient?.stop();
+    _mdnsClient = null;
   }
 
-  Future<void> sendData(ClipboardData data) async {
-    if (Platform.isAndroid || Platform.isIOS) {
-      // Implement data sending for mobile platforms
-    } else {
-      // Implement data sending for desktop platforms or notify unsupported
-    }
+  Future<void> sendData(ClipboardItem data) async {
+    // Implement data sending using sockets or other methods
+    print('Sending data: ${data.content}');
   }
 
   Future<void> startWifiSharing() async {
