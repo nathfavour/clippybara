@@ -49,6 +49,16 @@ Clippybara is an innovative Flutter project designed to keep your clipboard in s
    flutter run
    ```
 
+## Android NDK Setup
+
+To build the Android APK you must have a valid Android NDK installed.  
+We recommend installing NDK version **23.1.7779620** via Android Studio's SDK Manager.  
+If you encounter errors like:
+  
+  "NDK at /home/nathfavour/Android/Sdk/ndk/26.3.11579264 did not have a source.properties file",  
+
+please uninstall the broken version and install the recommended version.
+
 ## Usage
 
 - Launch the app on your Android or iOS device.
