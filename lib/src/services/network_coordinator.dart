@@ -100,7 +100,9 @@ class NetworkCoordinator {
           break;
       }
     } catch (e) {
-      print('Error handling connection: $e');
+      if (kDebugMode) {
+        print('Error handling connection: $e');
+      }
       socket.close();
     }
   }
