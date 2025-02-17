@@ -37,8 +37,8 @@ class AppTheme {
       ),
     ),
     switchTheme: SwitchThemeData(
-      thumbColor: WidgetStateProperty.all(aquamarine),
-      trackColor: WidgetStateProperty.all(aquamarine.withOpacity(0.5)),
+      thumbColor: MaterialStateProperty.all(aquamarine),
+      trackColor: MaterialStateProperty.all(aquamarine.withOpacity(0.5)),
     ),
     floatingActionButtonTheme: FloatingActionButtonThemeData(
       backgroundColor: aquamarine,
@@ -91,8 +91,8 @@ class AppTheme {
       ),
     ),
     switchTheme: SwitchThemeData(
-      thumbColor: WidgetStateProperty.all(aquamarine),
-      trackColor: WidgetStateProperty.all(aquamarine.withOpacity(0.5)),
+      thumbColor: MaterialStateProperty.all(aquamarine),
+      trackColor: MaterialStateProperty.all(aquamarine.withOpacity(0.5)),
     ),
     floatingActionButtonTheme: FloatingActionButtonThemeData(
       backgroundColor: aquamarine,
