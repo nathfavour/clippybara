@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:flutter/foundation.dart';
 import 'package:multicast_dns/multicast_dns.dart';
 
 class NetworkDiscoveryService {
@@ -24,7 +25,9 @@ class NetworkDiscoveryService {
       await _mdnsClient!.start();
       await _discoverServices();
     } catch (e) {
-      print('Error starting network discovery: $e');
+      if (kDebugMode) {
+        print('Error starting network discovery: $e');
+      }
     }
   }
 

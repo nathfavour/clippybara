@@ -1,12 +1,12 @@
-import 'package:wifi_iot/wifi_iot.dart';
+import 'package:network_info_plus/network_info_plus.dart';
 import '../models/clipboard_data.dart';
 import '../models/device_info.dart';
 import 'network_coordinator.dart';
 import 'dart:async';
-import 'dart:io' show Platform;
 
 class WifiService {
   final NetworkCoordinator _coordinator = NetworkCoordinator();
+  final _networkInfo = NetworkInfo();
   StreamSubscription? _devicesSubscription;
   bool _isInitialized = false;
 
@@ -22,28 +22,27 @@ class WifiService {
       _isInitialized = true;
     } catch (e) {
       print('Error initializing network coordinator: $e');
-      // If initialization fails, we'll try again with a delay
       await Future.delayed(const Duration(seconds: 5));
       await initialize();
     }
   }
 
-  Future<bool> connectToWifi(String ssid, String password) async {
-    if (Platform.isAndroid || Platform.isIOS) {
-      try {
-        await WiFiForIoTPlugin.disconnect();
-        await WiFiForIoTPlugin.connect(
-          ssid,
-          password: password,
-          security: NetworkSecurity.WPA,
-        );
-        return true;
-      } catch (e) {
-        print('Error connecting to WiFi: $e');
-        return false;
-      }
+  Future<String?> getWifiName() async {
+    try {
+      return await _networkInfo.getWifiName();
+    } catch (e) {
+      print('Error getting WiFi name: $e');
+      return null;
     }
-    return false;
+  }
+
+  Future<String?> getWifiIP() async {
+    try {
+      return await _networkInfo.getWifiIP();
+    } catch (e) {
+      print('Error getting WiFi IP: $e');
+      return null;
+    }
   }
 
   Future<void> startWifiSharing() async {

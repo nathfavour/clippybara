@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:multicast_dns/multicast_dns.dart';
 import '../models/clipboard_data.dart';
 import 'dart:io' show Platform;
@@ -13,7 +14,9 @@ class ConnectivityService {
         await _mdnsClient!.start();
         await _startServiceDiscovery();
       } catch (e) {
-        print('Error starting discovery: $e');
+        if (kDebugMode) {
+          print('Error starting discovery: $e');
+        }
       }
     }
   }
@@ -22,7 +25,9 @@ class ConnectivityService {
     await for (final PtrResourceRecord ptr in _mdnsClient!
         .lookup<PtrResourceRecord>(
             ResourceRecordQuery.serverPointer('_clipybara._tcp.local'))) {
-      print('Found device: ${ptr.domainName}');
+      if (kDebugMode) {
+        print('Found device: ${ptr.domainName}');
+      }
     }
   }
 
@@ -32,7 +37,9 @@ class ConnectivityService {
   }
 
   Future<void> sendData(ClipboardItem data) async {
-    print('Sending data: ${data.content}');
+    if (kDebugMode) {
+      print('Sending data: ${data.content}');
+    }
   }
 
   Future<void> startWifiSharing() async {

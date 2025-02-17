@@ -108,7 +108,9 @@ class NetworkCoordinator {
   }
 
   void _handleSocketError(Socket socket, dynamic error) {
-    print('Socket error: $error');
+    if (kDebugMode) {
+      print('Socket error: $error');
+    }
     _handleDisconnection(socket);
   }
 
