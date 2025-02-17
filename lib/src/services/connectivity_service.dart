@@ -1,11 +1,9 @@
-import 'package:network_info_plus/network_info_plus.dart';
 import 'package:multicast_dns/multicast_dns.dart';
 import '../models/clipboard_data.dart';
 import 'dart:io' show Platform;
 
 class ConnectivityService {
   final String _serviceId = 'com.clipybara.sync';
-  final NetworkInfo _networkInfo = NetworkInfo();
   MDnsClient? _mdnsClient;
 
   Future<void> startDiscovery() async {
@@ -34,7 +32,6 @@ class ConnectivityService {
   }
 
   Future<void> sendData(ClipboardItem data) async {
-    // Implement data sending using sockets or other methods
     print('Sending data: ${data.content}');
   }
 
