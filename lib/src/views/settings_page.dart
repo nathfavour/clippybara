@@ -162,21 +162,34 @@ class SettingsPage extends StatelessWidget {
   }
 
   Widget _buildSection(ThemeData theme, String title, List<Widget> children) {
-    return Card(
-      elevation: 2,
-      margin: const EdgeInsets.symmetric(vertical: 8),
-      child: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              title,
-              style: theme.textTheme.titleLarge,
-            ),
-            const Divider(),
-            ...children,
-          ],
+    return Container(
+      margin: const EdgeInsets.only(bottom: 16),
+      child: Card(
+        elevation: 2,
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                children: [
+                  Expanded(
+                    child: Text(
+                      title,
+                      style: theme.textTheme.titleLarge?.copyWith(
+                        fontSize: 20,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              const Divider(height: 24),
+              ...children.map((child) => Padding(
+                    padding: const EdgeInsets.only(bottom: 8),
+                    child: child,
+                  )),
+            ],
+          ),
         ),
       ),
     );

@@ -92,77 +92,85 @@ class HomePage extends StatelessWidget {
 
   Widget _buildMobileLayout(
       BuildContext context, ClipboardController controller, ThemeData theme) {
-    return Column(
-      children: [
-        Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Text(
-            'Clipboard',
-            style: theme.textTheme.titleLarge,
+    return SingleChildScrollView(
+      child: Column(
+        children: [
+          Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Text(
+              'Clipboard',
+              style: theme.textTheme.titleLarge,
+            ),
           ),
-        ),
-        _buildClipboardSection(controller, theme),
-        Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(
-                'Devices',
-                style: theme.textTheme.titleLarge,
-              ),
-              TextButton(
-                onPressed: () => Get.to(() => const DevicesPage()),
-                child: const Text('View All'),
-              ),
-            ],
+          SizedBox(
+            height: MediaQuery.of(context).size.height * 0.4,
+            child: _buildClipboardSection(controller, theme),
           ),
-        ),
-        _buildDeviceSection(controller, theme),
-      ],
+          Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  'Devices',
+                  style: theme.textTheme.titleLarge,
+                ),
+                TextButton(
+                  onPressed: () => Get.to(() => const DevicesPage()),
+                  child: const Text('View All'),
+                ),
+              ],
+            ),
+          ),
+          SizedBox(
+            height: MediaQuery.of(context).size.height * 0.3,
+            child: _buildDeviceSection(controller, theme),
+          ),
+        ],
+      ),
     );
   }
 
   Widget _buildClipboardSection(
       ClipboardController controller, ThemeData theme) {
-    return Padding(
-      padding: const EdgeInsets.all(16.0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Card(
-            elevation: 4,
-            child: Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    'Current Clipboard',
-                    style: theme.textTheme.titleMedium,
-                  ),
-                  const SizedBox(height: 8),
-                  Obx(() => SelectableText(
-                        controller.clipboardContent.isEmpty
-                            ? 'No content'
-                            : controller.clipboardContent,
-                        style: theme.textTheme.bodyLarge,
-                      )),
-                ],
+    return SingleChildScrollView(
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Card(
+              child: Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Current Clipboard',
+                      style: theme.textTheme.titleMedium,
+                    ),
+                    const SizedBox(height: 8),
+                    Obx(() => SelectableText(
+                          controller.clipboardContent.isEmpty
+                              ? 'No content'
+                              : controller.clipboardContent,
+                          style: theme.textTheme.bodyLarge,
+                          maxLines: 3,
+                          overflow: TextOverflow.ellipsis,
+                        )),
+                  ],
+                ),
               ),
             ),
-          ),
-          const SizedBox(height: 16),
-          Text(
-            'Clipboard History',
-            style: theme.textTheme.titleMedium,
-          ),
-          const SizedBox(height: 8),
-          SizedBox(
-            height: 200,
-            child: Obx(() => ListView.builder(
+            const SizedBox(height: 16),
+            Text(
+              'Clipboard History',
+              style: theme.textTheme.titleMedium,
+            ),
+            const SizedBox(height: 8),
+            Obx(() => ListView.builder(
                   shrinkWrap: true,
-                  physics: const ClampingScrollPhysics(),
+                  physics: const NeverScrollableScrollPhysics(),
                   itemCount: controller.clipboardHistory.length,
                   itemBuilder: (context, index) {
                     final item = controller.clipboardHistory[index];
@@ -178,8 +186,8 @@ class HomePage extends StatelessWidget {
                     );
                   },
                 )),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
