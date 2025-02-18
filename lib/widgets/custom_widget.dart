@@ -1,0 +1,26 @@
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+}  }    );      ),        onChanged: onChanged,        value: value,      trailing: Switch(      title: Text(title),    return ListTile(  Widget build(BuildContext context) {  @override  });    required this.onChanged,    required this.value,    required this.title,    super.key,  const CustomSwitchTile({  final ValueChanged<bool> onChanged;  final bool value;  final String title;class CustomSwitchTile extends StatelessWidget {import 'package:flutter/material.dart';

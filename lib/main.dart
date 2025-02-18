@@ -4,6 +4,8 @@ import 'dart:io' show Platform;
 import 'package:get/get.dart';
 import 'src/controllers/clipboard_controller.dart';
 import 'src/utils/helpers.dart';
+import 'src/views/home_page.dart';
+import 'theme/app_theme.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -22,12 +24,11 @@ class ClipybaraApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
-      home: Scaffold(
-        body: Center(
-          child: Text('Clipybara running in the background'),
-        ),
-      ),
+    return GetMaterialApp(
+      title: 'Clipybara',
+      theme: AppTheme.lightTheme,
+      darkTheme: AppTheme.darkTheme,
+      home: const HomePage(),
     );
   }
 }

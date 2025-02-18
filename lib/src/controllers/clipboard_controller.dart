@@ -15,6 +15,8 @@ class ClipboardController extends GetxController {
   final _syncEnabled = true.obs;
   final _clipboardHistory = <app.ClipboardItem>[].obs;
   final RxList<DeviceInfo> _connectedDevices = <DeviceInfo>[].obs;
+  final _autoConnect = true.obs;
+  final _notificationsEnabled = true.obs;
 
   final ConnectivityService _connectivityService = ConnectivityService();
   final WifiService _wifiService = WifiService();
@@ -26,6 +28,8 @@ class ClipboardController extends GetxController {
   bool get syncEnabled => _syncEnabled.value;
   List<app.ClipboardItem> get clipboardHistory => _clipboardHistory;
   List<DeviceInfo> get connectedDevices => _connectedDevices;
+  bool get autoConnect => _autoConnect.value;
+  bool get notificationsEnabled => _notificationsEnabled.value;
 
   @override
   void onInit() {
@@ -155,6 +159,18 @@ class ClipboardController extends GetxController {
     if (index >= 0 && index < _clipboardHistory.length) {
       _clipboardHistory.removeAt(index);
     }
+  }
+
+  void setAutoConnect(bool value) {
+    _autoConnect.value = value;
+  }
+
+  void setNotificationsEnabled(bool value) {
+    _notificationsEnabled.value = value;
+  }
+
+  void clearHistory() {
+    _clipboardHistory.clear();
   }
 
   @override
