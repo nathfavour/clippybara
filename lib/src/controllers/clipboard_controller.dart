@@ -6,6 +6,7 @@ import '../models/clipboard_data.dart' as app;
 import '../utils/helpers.dart';
 import 'dart:async';
 import 'dart:io' show Platform;
+import '../models/device_info.dart';
 
 class ClipboardController extends GetxController {
   final _clipboardContent = ''.obs;
@@ -13,6 +14,7 @@ class ClipboardController extends GetxController {
   final _useWifi = true.obs;
   final _syncEnabled = true.obs;
   final _clipboardHistory = <app.ClipboardItem>[].obs;
+  final RxList<DeviceInfo> _connectedDevices = <DeviceInfo>[].obs;
 
   final ConnectivityService _connectivityService = ConnectivityService();
   final WifiService _wifiService = WifiService();
@@ -23,6 +25,7 @@ class ClipboardController extends GetxController {
   bool get useWifi => _useWifi.value;
   bool get syncEnabled => _syncEnabled.value;
   List<app.ClipboardItem> get clipboardHistory => _clipboardHistory;
+  List<DeviceInfo> get connectedDevices => _connectedDevices;
 
   @override
   void onInit() {
