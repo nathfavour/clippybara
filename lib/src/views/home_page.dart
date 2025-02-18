@@ -92,41 +92,45 @@ class HomePage extends StatelessWidget {
 
   Widget _buildMobileLayout(
       BuildContext context, ClipboardController controller, ThemeData theme) {
-    return SingleChildScrollView(
-      child: Column(
-        children: [
-          Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Text(
-              'Clipboard',
-              style: theme.textTheme.titleLarge,
+    return SafeArea(
+      top: false,
+      child: SingleChildScrollView(
+        child: Column(
+          children: [
+            Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Text(
+                'Clipboard',
+                style: theme.textTheme.titleLarge,
+              ),
             ),
-          ),
-          SizedBox(
-            height: MediaQuery.of(context).size.height * 0.4,
-            child: _buildClipboardSection(controller, theme),
-          ),
-          Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(
-                  'Devices',
-                  style: theme.textTheme.titleLarge,
-                ),
-                TextButton(
-                  onPressed: () => Get.to(() => const DevicesPage()),
-                  child: const Text('View All'),
-                ),
-              ],
+            SizedBox(
+              height: MediaQuery.of(context).size.height * 0.4,
+              child: _buildClipboardSection(controller, theme),
             ),
-          ),
-          SizedBox(
-            height: MediaQuery.of(context).size.height * 0.3,
-            child: _buildDeviceSection(controller, theme),
-          ),
-        ],
+            Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    'Devices',
+                    style: theme.textTheme.titleLarge,
+                  ),
+                  TextButton(
+                    onPressed: () => Get.to(() => const DevicesPage()),
+                    child: const Text('View All'),
+                  ),
+                ],
+              ),
+            ),
+            SizedBox(
+              height: MediaQuery.of(context).size.height * 0.3,
+              child: _buildDeviceSection(controller, theme),
+            ),
+            const SizedBox(height: 16), // extra bottom padding
+          ],
+        ),
       ),
     );
   }
