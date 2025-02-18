@@ -95,40 +95,34 @@ class HomePage extends StatelessWidget {
     return Column(
       children: [
         Expanded(
-          child: SingleChildScrollView(
-            child: Column(
-              children: [
-                Padding(
-                  padding: const EdgeInsets.all(16.0),
-                  child: Text(
-                    'Clipboard',
-                    style: theme.textTheme.titleLarge,
-                  ),
+          child: ListView(
+            children: [
+              Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Text(
+                  'Clipboard',
+                  style: theme.textTheme.titleLarge,
                 ),
-                _buildClipboardSection(controller, theme),
-                Padding(
-                  padding: const EdgeInsets.all(16.0),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        'Devices',
-                        style: theme.textTheme.titleLarge,
-                      ),
-                      TextButton(
-                        onPressed: () => Get.to(() => const DevicesPage()),
-                        child: const Text('View All'),
-                      ),
-                    ],
-                  ),
+              ),
+              _buildClipboardSection(controller, theme),
+              Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      'Devices',
+                      style: theme.textTheme.titleLarge,
+                    ),
+                    TextButton(
+                      onPressed: () => Get.to(() => const DevicesPage()),
+                      child: const Text('View All'),
+                    ),
+                  ],
                 ),
-                SizedBox(
-                  height: 150,
-                  child: _buildDeviceSection(controller, theme),
-                ),
-                const SizedBox(height: 16),
-              ],
-            ),
+              ),
+              _buildDeviceSection(controller, theme),
+            ],
           ),
         ),
       ],
@@ -198,6 +192,7 @@ class HomePage extends StatelessWidget {
       padding: const EdgeInsets.all(16.0),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisSize: MainAxisSize.min,
         children: [
           Card(
             elevation: 4,
@@ -228,16 +223,19 @@ class HomePage extends StatelessWidget {
             style: theme.textTheme.titleMedium,
           ),
           const SizedBox(height: 8),
-          SizedBox(
-            height: 150,
-            child: Obx(() => controller.connectedDevices.isEmpty
-                ? Center(
+          Obx(() => controller.connectedDevices.isEmpty
+              ? Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 16.0),
+                  child: Center(
                     child: Text(
                       'No devices connected',
                       style: theme.textTheme.bodyLarge,
                     ),
-                  )
-                : ListView.builder(
+                  ),
+                )
+              : SizedBox(
+                  height: 120,
+                  child: ListView.builder(
                     scrollDirection: Axis.horizontal,
                     itemCount: controller.connectedDevices.length,
                     itemBuilder: (context, index) {
@@ -263,8 +261,8 @@ class HomePage extends StatelessWidget {
                         ),
                       );
                     },
-                  )),
-          ),
+                  ),
+                )),
         ],
       ),
     );

@@ -73,8 +73,8 @@ class _DevicesPageState extends State<DevicesPage> {
                       leading: const Icon(Icons.devices),
                       title: Text(device.name),
                       subtitle: Text(device.id),
-                      trailing: Row(
-                        mainAxisSize: MainAxisSize.min,
+                      trailing: Wrap(
+                        spacing: 8,
                         children: [
                           ElevatedButton(
                             onPressed: () {
@@ -82,7 +82,6 @@ class _DevicesPageState extends State<DevicesPage> {
                             },
                             child: const Text('Connect'),
                           ),
-                          const SizedBox(width: 8),
                           IconButton(
                             icon: _favoritesManager.favorites
                                     .any((fav) => fav.id == device.id)
@@ -104,29 +103,32 @@ class _DevicesPageState extends State<DevicesPage> {
                 );
               }),
             ),
-            Container(
-              height: 80,
-              color: Colors.grey[200],
-              child: Obx(() {
-                return ListView.builder(
-                  scrollDirection: Axis.horizontal,
-                  itemCount: _favoritesManager.favorites.length,
-                  itemBuilder: (context, index) {
-                    final fav = _favoritesManager.favorites[index];
-                    return Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Chip(
-                        avatar: const Icon(Icons.star, color: Colors.amber),
-                        label: Text(fav.name),
-                        deleteIcon: const Icon(Icons.close),
-                        onDeleted: () {
-                          _favoritesManager.removeFavorite(fav.id);
-                        },
-                      ),
-                    );
-                  },
-                );
-              }),
+            SafeArea(
+              child: Container(
+                height: 60,
+                color: Colors.grey[200],
+                child: Obx(() {
+                  return ListView.builder(
+                    scrollDirection: Axis.horizontal,
+                    itemCount: _favoritesManager.favorites.length,
+                    itemBuilder: (context, index) {
+                      final fav = _favoritesManager.favorites[index];
+                      return Padding(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 4.0, vertical: 8.0),
+                        child: Chip(
+                          avatar: const Icon(Icons.star, color: Colors.amber),
+                          label: Text(fav.name),
+                          deleteIcon: const Icon(Icons.close),
+                          onDeleted: () {
+                            _favoritesManager.removeFavorite(fav.id);
+                          },
+                        ),
+                      );
+                    },
+                  );
+                }),
+              ),
             ),
           ],
         ),
