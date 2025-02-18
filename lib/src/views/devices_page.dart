@@ -56,78 +56,80 @@ class _DevicesPageState extends State<DevicesPage> {
           )
         ],
       ),
-      body: Column(
-        children: [
-          Expanded(
-            child: Obx(() {
-              if (_discoveredDevices.isEmpty) {
-                return const Center(child: Text('No devices found'));
-              }
-              return ListView.separated(
-                itemCount: _discoveredDevices.length,
-                separatorBuilder: (context, index) => const Divider(),
-                itemBuilder: (context, index) {
-                  final device = _discoveredDevices[index];
-                  return ListTile(
-                    leading: const Icon(Icons.devices),
-                    title: Text(device.name),
-                    subtitle: Text(device.id),
-                    trailing: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        ElevatedButton(
-                          onPressed: () {
-                            // TODO: Implement connection logic
-                          },
-                          child: const Text('Connect'),
-                        ),
-                        const SizedBox(width: 8),
-                        IconButton(
-                          icon: _favoritesManager.favorites
-                                  .any((fav) => fav.id == device.id)
-                              ? const Icon(Icons.star, color: Colors.amber)
-                              : const Icon(Icons.star_border),
-                          onPressed: () {
-                            if (_favoritesManager.favorites
-                                .any((fav) => fav.id == device.id)) {
-                              _favoritesManager.removeFavorite(device.id);
-                            } else {
-                              _favoritesManager.addFavorite(device);
-                            }
-                          },
-                        ),
-                      ],
-                    ),
-                  );
-                },
-              );
-            }),
-          ),
-          Container(
-            color: Colors.grey[200],
-            height: 100,
-            child: Obx(() {
-              return ListView.builder(
-                scrollDirection: Axis.horizontal,
-                itemCount: _favoritesManager.favorites.length,
-                itemBuilder: (context, index) {
-                  final fav = _favoritesManager.favorites[index];
-                  return Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Chip(
-                      avatar: const Icon(Icons.star, color: Colors.amber),
-                      label: Text(fav.name),
-                      deleteIcon: const Icon(Icons.close),
-                      onDeleted: () {
-                        _favoritesManager.removeFavorite(fav.id);
-                      },
-                    ),
-                  );
-                },
-              );
-            }),
-          ),
-        ],
+      body: SafeArea(
+        child: Column(
+          children: [
+            Expanded(
+              child: Obx(() {
+                if (_discoveredDevices.isEmpty) {
+                  return const Center(child: Text('No devices found'));
+                }
+                return ListView.separated(
+                  itemCount: _discoveredDevices.length,
+                  separatorBuilder: (context, index) => const Divider(),
+                  itemBuilder: (context, index) {
+                    final device = _discoveredDevices[index];
+                    return ListTile(
+                      leading: const Icon(Icons.devices),
+                      title: Text(device.name),
+                      subtitle: Text(device.id),
+                      trailing: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          ElevatedButton(
+                            onPressed: () {
+                              // TODO: Implement connection logic
+                            },
+                            child: const Text('Connect'),
+                          ),
+                          const SizedBox(width: 8),
+                          IconButton(
+                            icon: _favoritesManager.favorites
+                                    .any((fav) => fav.id == device.id)
+                                ? const Icon(Icons.star, color: Colors.amber)
+                                : const Icon(Icons.star_border),
+                            onPressed: () {
+                              if (_favoritesManager.favorites
+                                  .any((fav) => fav.id == device.id)) {
+                                _favoritesManager.removeFavorite(device.id);
+                              } else {
+                                _favoritesManager.addFavorite(device);
+                              }
+                            },
+                          ),
+                        ],
+                      ),
+                    );
+                  },
+                );
+              }),
+            ),
+            Container(
+              height: 80,
+              color: Colors.grey[200],
+              child: Obx(() {
+                return ListView.builder(
+                  scrollDirection: Axis.horizontal,
+                  itemCount: _favoritesManager.favorites.length,
+                  itemBuilder: (context, index) {
+                    final fav = _favoritesManager.favorites[index];
+                    return Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Chip(
+                        avatar: const Icon(Icons.star, color: Colors.amber),
+                        label: Text(fav.name),
+                        deleteIcon: const Icon(Icons.close),
+                        onDeleted: () {
+                          _favoritesManager.removeFavorite(fav.id);
+                        },
+                      ),
+                    );
+                  },
+                );
+              }),
+            ),
+          ],
+        ),
       ),
     );
   }

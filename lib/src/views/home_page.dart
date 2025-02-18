@@ -92,105 +92,103 @@ class HomePage extends StatelessWidget {
 
   Widget _buildMobileLayout(
       BuildContext context, ClipboardController controller, ThemeData theme) {
-    return SafeArea(
-      top: false,
-      child: SingleChildScrollView(
-        child: Column(
-          children: [
-            Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Text(
-                'Clipboard',
-                style: theme.textTheme.titleLarge,
-              ),
-            ),
-            SizedBox(
-              height: MediaQuery.of(context).size.height * 0.4,
-              child: _buildClipboardSection(controller, theme),
-            ),
-            Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    'Devices',
+    return Column(
+      children: [
+        Expanded(
+          child: SingleChildScrollView(
+            child: Column(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Text(
+                    'Clipboard',
                     style: theme.textTheme.titleLarge,
                   ),
-                  TextButton(
-                    onPressed: () => Get.to(() => const DevicesPage()),
-                    child: const Text('View All'),
+                ),
+                _buildClipboardSection(controller, theme),
+                Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        'Devices',
+                        style: theme.textTheme.titleLarge,
+                      ),
+                      TextButton(
+                        onPressed: () => Get.to(() => const DevicesPage()),
+                        child: const Text('View All'),
+                      ),
+                    ],
                   ),
-                ],
-              ),
+                ),
+                SizedBox(
+                  height: 150,
+                  child: _buildDeviceSection(controller, theme),
+                ),
+                const SizedBox(height: 16),
+              ],
             ),
-            SizedBox(
-              height: MediaQuery.of(context).size.height * 0.3,
-              child: _buildDeviceSection(controller, theme),
-            ),
-            const SizedBox(height: 16), // extra bottom padding
-          ],
+          ),
         ),
-      ),
+      ],
     );
   }
 
   Widget _buildClipboardSection(
       ClipboardController controller, ThemeData theme) {
-    return SingleChildScrollView(
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Card(
-              child: Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'Current Clipboard',
-                      style: theme.textTheme.titleMedium,
-                    ),
-                    const SizedBox(height: 8),
-                    Obx(() => SelectableText(
-                          controller.clipboardContent.isEmpty
-                              ? 'No content'
-                              : controller.clipboardContent,
-                          style: theme.textTheme.bodyLarge,
-                          maxLines: 3,
-                        )),
-                  ],
-                ),
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16.0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Card(
+            child: Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Current Clipboard',
+                    style: theme.textTheme.titleMedium,
+                  ),
+                  const SizedBox(height: 8),
+                  Obx(() => SelectableText(
+                        controller.clipboardContent.isEmpty
+                            ? 'No content'
+                            : controller.clipboardContent,
+                        style: theme.textTheme.bodyLarge,
+                        maxLines: 3,
+                      )),
+                ],
               ),
             ),
-            const SizedBox(height: 16),
-            Text(
-              'Clipboard History',
-              style: theme.textTheme.titleMedium,
-            ),
-            const SizedBox(height: 8),
-            Obx(() => ListView.builder(
-                  shrinkWrap: true,
-                  physics: const NeverScrollableScrollPhysics(),
-                  itemCount: controller.clipboardHistory.length,
-                  itemBuilder: (context, index) {
-                    final item = controller.clipboardHistory[index];
-                    return Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 4.0),
-                      child: ClipboardCard(
-                        item: item,
-                        onCopy: () => controller.copyToClipboard(item.content),
-                        onShare: () =>
-                            controller.shareWithConnectedDevices(item.content),
-                        onDelete: () => controller.removeFromHistory(index),
-                      ),
-                    );
-                  },
-                )),
-          ],
-        ),
+          ),
+          const SizedBox(height: 16),
+          Text(
+            'Clipboard History',
+            style: theme.textTheme.titleMedium,
+          ),
+          const SizedBox(height: 8),
+          Obx(() => ListView.builder(
+                shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(),
+                itemCount: controller.clipboardHistory.length,
+                itemBuilder: (context, index) {
+                  final item = controller.clipboardHistory[index];
+                  return Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 4.0),
+                    child: ClipboardCard(
+                      item: item,
+                      onCopy: () => controller.copyToClipboard(item.content),
+                      onShare: () =>
+                          controller.shareWithConnectedDevices(item.content),
+                      onDelete: () => controller.removeFromHistory(index),
+                    ),
+                  );
+                },
+              )),
+        ],
       ),
     );
   }
