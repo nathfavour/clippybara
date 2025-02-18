@@ -156,7 +156,6 @@ class HomePage extends StatelessWidget {
                               : controller.clipboardContent,
                           style: theme.textTheme.bodyLarge,
                           maxLines: 3,
-                          overflow: TextOverflow.ellipsis,
                         )),
                   ],
                 ),
