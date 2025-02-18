@@ -1,5 +1,5 @@
 import 'dart:async';
-import 'dart:io';
+import 'dart:io'; // Ensure dart:io is imported
 import 'package:network_info_plus/network_info_plus.dart';
 import 'package:flutter/foundation.dart';
 
@@ -15,6 +15,12 @@ class NetworkDiscoveryService {
   }
 
   Future<void> startListening() async {
+    if (kIsWeb) {
+      if (kDebugMode) {
+        print("Network discovery not supported on web.");
+      }
+      return;
+    }
     try {
       final String? wifiIP = await _networkInfo.getWifiIP();
       if (wifiIP == null) {
@@ -26,8 +32,8 @@ class NetworkDiscoveryService {
 
       final InternetAddress listenAddress =
           InternetAddress.anyIPv4; // Listen on all interfaces
-      final DatagramSocket socket =
-          await DatagramSocket.bind(listenAddress, discoveryPort);
+      final RawDatagramSocket socket =
+          await RawDatagramSocket.bind(listenAddress, discoveryPort);
 
       socket.listen((event) {
         final datagram = socket.receive();
@@ -61,8 +67,8 @@ class NetworkDiscoveryService {
     }
 
     try {
-      final DatagramSocket socket =
-          await DatagramSocket.bind(InternetAddress.anyIPv4, 0);
+      final RawDatagramSocket socket =
+          await RawDatagramSocket.bind(InternetAddress.anyIPv4, 0);
       socket.broadcast = true;
       final message = "CLIPYBARA_DISCOVERY"; // Simple discovery message
       List<int> data = message.codeUnits;
