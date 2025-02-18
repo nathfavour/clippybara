@@ -13,6 +13,8 @@ void main() async {
 
   if (!kIsWeb && (Platform.isAndroid || Platform.isIOS)) {
     permissionsGranted = await Helpers.requestPermissions();
+    // Request battery optimization exemption
+    await Helpers.requestBatteryOptimization();
   }
 
   Get.put(ClipboardController());

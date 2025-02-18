@@ -16,10 +16,16 @@ class NetworkCoordinator {
   final Map<String, DeviceInfo> _connectedDevices = {};
   ServerSocket? _serverSocket;
   Timer? _discoveryTimer;
+  Timer? _helloTimer;
 
   Future<void> initialize() async {
     await startServer();
     _startPeriodicDiscovery();
+    // Start periodic hello broadcast every 10 seconds.
+    _helloTimer?.cancel();
+    _helloTimer = Timer.periodic(const Duration(seconds: 10), (_) async {
+      await broadcastHello();
+    });
   }
 
   Future<void> startServer() async {
@@ -190,9 +196,27 @@ class NetworkCoordinator {
     }
   }
 
+  Future<void> broadcastHello() async {
+    // Build hello message including current device info.
+    final device = await DeviceInfo.current();
+    final hello = {
+      'type': 'HELLO',
+      'identifier': _appIdentifier,
+      'device': device.toJson(),
+    };
+    final encoded = utf8.encode(json.encode(hello));
+    // Send hello message on all available connections.
+    for (var device in _connectedDevices.values) {
+      device.socket?.add(encoded);
+    }
+    // Optionally, log the broadcast.
+    if (kDebugMode) print('Broadcasted HELLO: ${device.name}');
+  }
+
   void dispose() {
     _serverSocket?.close();
     _discoveryTimer?.cancel();
+    _helloTimer?.cancel();
     for (var device in _connectedDevices.values) {
       device.socket?.close();
     }

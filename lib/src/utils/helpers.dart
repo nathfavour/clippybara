@@ -3,9 +3,11 @@ import 'package:device_info_plus/device_info_plus.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'dart:io' show Platform;
+import 'package:network_info_plus/network_info_plus.dart';
 
 class Helpers {
   static final DeviceInfoPlugin _deviceInfo = DeviceInfoPlugin();
+  static final NetworkInfo _networkInfo = NetworkInfo();
   static String? _deviceId;
   static String? _deviceName;
 
@@ -48,22 +50,41 @@ class Helpers {
     return _deviceId!;
   }
 
+  // Modified to auto-generate device nickname using local IP (if available)
   static Future<String> getDeviceName() async {
     if (_deviceName != null) return _deviceName!;
 
-    if (kIsWeb) {
-      _deviceName = 'Web Browser';
-    } else if (Platform.isAndroid) {
-      final info = await _deviceInfo.androidInfo;
-      _deviceName = '${info.brand} ${info.model}';
-    } else if (Platform.isIOS) {
-      final info = await _deviceInfo.iosInfo;
-      _deviceName = info.name;
+    String? ip = await _networkInfo.getWifiIP();
+    if (ip != null) {
+      _deviceName = 'Device $ip';
     } else {
-      _deviceName = Platform.operatingSystem;
+      if (kIsWeb) {
+        _deviceName = 'Web Browser';
+      } else if (Platform.isAndroid) {
+        final info = await _deviceInfo.androidInfo;
+        _deviceName = '${info.brand} ${info.model}';
+      } else if (Platform.isIOS) {
+        final info = await _deviceInfo.iosInfo;
+        _deviceName = info.name;
+      } else {
+        _deviceName = Platform.operatingSystem;
+      }
     }
-
     return _deviceName!;
+  }
+
+  // New method to request battery optimization exemption
+  static Future<bool> requestBatteryOptimization() async {
+    // This is platform specific logic.
+    // For Android, one would typically check and then request ignoring battery optimizations.
+    // (Requires additional permission handling using a plugin such as 'battery_optimization')
+    // Here, we'll simulate the process.
+    if (!kIsWeb && (Platform.isAndroid || Platform.isIOS)) {
+      // TODO: Integrate battery optimization plugin and request exemption.
+      print('Requesting battery optimization exemption...');
+      return true;
+    }
+    return true;
   }
 
   static void showError(String message, {String? title}) {

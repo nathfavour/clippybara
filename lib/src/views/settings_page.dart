@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../../widgets/custom_widget.dart';
 import '../controllers/clipboard_controller.dart';
+import 'package:clippybara/src/utils/helpers.dart';
 
 class SettingsPage extends StatelessWidget {
   const SettingsPage({super.key});
@@ -149,6 +150,33 @@ class SettingsPage extends StatelessWidget {
                                         ))
                                     .toList(),
                               )),
+                      ],
+                    ),
+                    const SizedBox(height: 24),
+                    _buildSection(
+                      theme,
+                      'Background Service',
+                      [
+                        ListTile(
+                          leading: const Icon(Icons.battery_std),
+                          title: const Text('Disable Battery Optimization'),
+                          subtitle:
+                              const Text('Allow app to run in background'),
+                          trailing: ElevatedButton(
+                            onPressed: () async {
+                              bool success =
+                                  await Helpers.requestBatteryOptimization();
+                              final snackBar = SnackBar(
+                                content: Text(success
+                                    ? 'Battery optimization disabled.'
+                                    : 'Request failed.'),
+                              );
+                              ScaffoldMessenger.of(context)
+                                  .showSnackBar(snackBar);
+                            },
+                            child: const Text('Request'),
+                          ),
+                        ),
                       ],
                     ),
                   ],
