@@ -5,7 +5,9 @@ import '../services/wifi_service.dart';
 import '../models/clipboard_data.dart' as app;
 import '../utils/helpers.dart';
 import 'dart:async';
-import 'dart:io' show Platform;
+import 'dart:io' show Platform, Socket;
+import 'dart:convert';
+import 'package:flutter/foundation.dart';
 import '../models/device_info.dart';
 import '../services/network_discovery_service.dart';
 
@@ -176,14 +178,59 @@ class ClipboardController extends GetxController {
 
   void _startDeviceDiscovery() async {
     await _networkDiscoveryService.initialize();
-    _networkDiscoveryService.onDeviceDiscovered.listen((deviceId) {
-      if (!_connectedDevices.any((device) => device.id == deviceId)) {
-        Helpers.getDeviceName().then((deviceName) {
-          final newDevice = DeviceInfo(id: deviceId, name: deviceName);
-          _connectedDevices.add(newDevice);
-        });
+    _networkDiscoveryService.onDeviceDiscovered.listen((ipAddress) async {
+      if (!_connectedDevices.any((device) => device.id == ipAddress)) {
+        try {
+          final socket = await Socket.connect(ipAddress, 8080);
+          final device = await _getDeviceInfo(socket);
+          _connectedDevices.add(device);
+        } catch (e) {
+          if (kDebugMode) {
+            print('Error connecting to device at $ipAddress: $e');
+          }
+        }
       }
     });
+  }
+
+  Future<DeviceInfo> _getDeviceInfo(Socket socket) async {
+    final completer = Completer<DeviceInfo>();
+
+    socket.listen((data) {
+      try {
+        final message = json.decode(String.fromCharCodes(data));
+        if (message['type'] == 'HELLO') {
+          final deviceInfo = DeviceInfo.fromJson(message['device']);
+          deviceInfo.socket = socket;
+          completer.complete(deviceInfo);
+        }
+      } catch (e) {
+        if (kDebugMode) {
+          print('Error decoding device info: $e');
+        }
+        completer.completeError(e);
+      }
+    }, onError: (error) {
+      if (kDebugMode) {
+        print('Socket error: $error');
+      }
+      completer.completeError(error);
+    }, onDone: () {
+      if (kDebugMode) {
+        print('Socket closed');
+      }
+    });
+
+    // Send HELLO message to get device info
+    final device = await DeviceInfo.current();
+    final hello = {
+      'type': 'HELLO',
+      'identifier': 'CLIPYBARA_NET_V1',
+      'device': device.toJson(),
+    };
+    socket.add(utf8.encode(json.encode(hello)));
+
+    return completer.future;
   }
 
   @override

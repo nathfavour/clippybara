@@ -54,15 +54,26 @@ class NetworkCoordinator {
       if (kDebugMode) {
         print('New connection: ${socket.remoteAddress.address}');
       }
-      socket.listen(
-        (data) => _handleIncomingConnection(socket, data),
-        onError: (error) => _handleSocketError(socket, error, socket),
-        onDone: () => _handleDisconnection(socket),
-      );
+      _handleConnection(socket);
     });
   }
 
-  Future<void> _handleIncomingConnection(Socket socket, List<int> data) async {
+  Future<void> _handleConnection(Socket socket) async {
+    try {
+      socket.listen(
+        (data) => _handleIncomingData(socket, data),
+        onError: (error) => _handleSocketError(socket, error, socket),
+        onDone: () => _handleDisconnection(socket),
+      );
+    } catch (e) {
+      if (kDebugMode) {
+        print('Error handling connection: $e');
+      }
+      _handleSocketError(socket, e, socket);
+    }
+  }
+
+  Future<void> _handleIncomingData(Socket socket, List<int> data) async {
     try {
       final message = json.decode(String.fromCharCodes(data));
 
