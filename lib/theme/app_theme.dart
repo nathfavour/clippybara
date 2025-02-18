@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 
 class AppTheme {
-  static final Color aquamarine = const Color(0xFF7FFFD4);
+  static const Color aquamarine = Color(0xFF7FFFD4);
+  static const Color darkTextColor = Color(0xFF333333);
+  static const Color lightTextColor = Colors.white;
 
   static final ThemeData lightTheme = ThemeData(
     useMaterial3: true,
@@ -11,29 +13,36 @@ class AppTheme {
       primary: aquamarine,
       secondary: Colors.teal,
       surface: Colors.white,
+      background: Colors.grey[50]!,
+      onPrimary: lightTextColor,
+      onSecondary: lightTextColor,
     ),
-    scaffoldBackgroundColor: Colors.white,
+    scaffoldBackgroundColor: Colors.grey[50],
     appBarTheme: AppBarTheme(
       backgroundColor: aquamarine,
-      elevation: 4,
-      shadowColor: Colors.grey.withOpacity(0.5),
+      elevation: 0,
+      titleTextStyle: const TextStyle(
+        color: lightTextColor,
+        fontSize: 20,
+        fontWeight: FontWeight.bold,
+      ),
+      iconTheme: const IconThemeData(color: lightTextColor),
     ),
     elevatedButtonTheme: ElevatedButtonThemeData(
       style: ElevatedButton.styleFrom(
         backgroundColor: aquamarine,
-        foregroundColor: Colors.white,
-        shadowColor: Colors.grey.withOpacity(0.6),
-        elevation: 8,
+        foregroundColor: lightTextColor,
+        textStyle: const TextStyle(fontWeight: FontWeight.bold),
+        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(12),
+          borderRadius: BorderRadius.circular(8),
         ),
       ),
     ),
     cardTheme: CardTheme(
-      elevation: 4,
-      shadowColor: Colors.grey.withOpacity(0.5),
+      elevation: 2,
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(8),
       ),
     ),
     switchTheme: SwitchThemeData(
@@ -42,19 +51,26 @@ class AppTheme {
     ),
     floatingActionButtonTheme: FloatingActionButtonThemeData(
       backgroundColor: aquamarine,
-      foregroundColor: Colors.white,
+      foregroundColor: lightTextColor,
       elevation: 4,
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(12),
       ),
     ),
     dialogTheme: DialogTheme(
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(12),
       ),
-      elevation: 8,
+      elevation: 4,
     ),
-    // ...additional theme customizations...
+    textTheme: const TextTheme(
+      bodyLarge: TextStyle(fontSize: 16, color: darkTextColor),
+      bodyMedium: TextStyle(fontSize: 14, color: darkTextColor),
+      titleLarge: TextStyle(
+          fontSize: 22, fontWeight: FontWeight.bold, color: darkTextColor),
+      titleMedium: TextStyle(
+          fontSize: 18, fontWeight: FontWeight.bold, color: darkTextColor),
+    ),
   );
 
   static final ThemeData darkTheme = ThemeData(
@@ -64,30 +80,38 @@ class AppTheme {
     colorScheme: ColorScheme.dark(
       primary: aquamarine,
       secondary: Colors.tealAccent,
-      surface: Colors.grey[900]!,
+      surface: Colors.grey[800]!,
+      background: Colors.grey[900]!,
+      onPrimary: darkTextColor,
+      onSecondary: darkTextColor,
     ),
-    scaffoldBackgroundColor: Colors.black,
+    scaffoldBackgroundColor: Colors.grey[900],
     appBarTheme: AppBarTheme(
       backgroundColor: aquamarine,
-      elevation: 4,
-      shadowColor: Colors.black45,
+      elevation: 0,
+      titleTextStyle: const TextStyle(
+        color: darkTextColor,
+        fontSize: 20,
+        fontWeight: FontWeight.bold,
+      ),
+      iconTheme: const IconThemeData(color: darkTextColor),
     ),
     elevatedButtonTheme: ElevatedButtonThemeData(
       style: ElevatedButton.styleFrom(
         backgroundColor: aquamarine,
-        foregroundColor: Colors.black,
-        shadowColor: Colors.black54,
-        elevation: 8,
+        foregroundColor: darkTextColor,
+        textStyle: const TextStyle(fontWeight: FontWeight.bold),
+        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(12),
+          borderRadius: BorderRadius.circular(8),
         ),
       ),
     ),
     cardTheme: CardTheme(
-      elevation: 4,
-      shadowColor: Colors.black45,
+      elevation: 2,
+      color: Colors.grey[800],
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(8),
       ),
     ),
     switchTheme: SwitchThemeData(
@@ -96,12 +120,25 @@ class AppTheme {
     ),
     floatingActionButtonTheme: FloatingActionButtonThemeData(
       backgroundColor: aquamarine,
-      foregroundColor: Colors.black,
+      foregroundColor: darkTextColor,
       elevation: 4,
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(12),
       ),
     ),
-    // ...additional theme customizations...
+    dialogTheme: DialogTheme(
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(12),
+      ),
+      elevation: 4,
+    ),
+    textTheme: const TextTheme(
+      bodyLarge: TextStyle(fontSize: 16, color: lightTextColor),
+      bodyMedium: TextStyle(fontSize: 14, color: lightTextColor),
+      titleLarge: TextStyle(
+          fontSize: 22, fontWeight: FontWeight.bold, color: lightTextColor),
+      titleMedium: TextStyle(
+          fontSize: 18, fontWeight: FontWeight.bold, color: lightTextColor),
+    ),
   );
 }

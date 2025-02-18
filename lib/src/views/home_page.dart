@@ -27,37 +27,14 @@ class HomePage extends StatelessWidget {
         onPressed: () => _showCreateClipDialog(context, controller),
         child: const Icon(Icons.add),
       ),
-      body: ListView(
-        children: [
-          LayoutBuilder(
-            builder: (context, constraints) {
-              if (constraints.maxWidth > 600) {
-                return _buildTabletLayout(controller, theme);
-              } else {
-                // Pass context to the mobile layout builder
-                return _buildMobileLayout(context, controller, theme);
-              }
-            },
-          ),
-          const SizedBox(height: 20),
-          const Padding(
-            padding: EdgeInsets.symmetric(horizontal: 16.0),
-            child: Text(
-              'Devices',
-              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-            ),
-          ),
-          ListTile(
-            leading: const Icon(Icons.devices),
-            title: const Text("Discover Devices"),
-            subtitle:
-                const Text("Scan, connect, and add devices to your favorites."),
-            trailing: const Icon(Icons.arrow_forward_ios),
-            onTap: () {
-              Get.to(() => const DevicesPage());
-            },
-          ),
-        ],
+      body: LayoutBuilder(
+        builder: (context, constraints) {
+          if (constraints.maxWidth > 600) {
+            return _buildTabletLayout(controller, theme);
+          } else {
+            return _buildMobileLayout(context, controller, theme);
+          }
+        },
       ),
     );
   }
@@ -115,33 +92,34 @@ class HomePage extends StatelessWidget {
 
   Widget _buildMobileLayout(
       BuildContext context, ClipboardController controller, ThemeData theme) {
-    return SizedBox(
-      height: MediaQuery.of(context).size.height *
-          0.7, // Adjust the height as needed
-      child: DefaultTabController(
-        length: 2,
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            TabBar(
-              tabs: const [
-                Tab(text: 'Clipboard'),
-                Tab(text: 'Devices'),
-              ],
-              labelStyle: theme.textTheme.titleMedium,
-            ),
-            Flexible(
-              fit: FlexFit.loose,
-              child: TabBarView(
-                children: [
-                  _buildClipboardSection(controller, theme),
-                  _buildDeviceSection(controller, theme),
-                ],
-              ),
-            ),
-          ],
+    return Column(
+      children: [
+        Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Text(
+            'Clipboard',
+            style: theme.textTheme.titleLarge,
+          ),
         ),
-      ),
+        _buildClipboardSection(controller, theme),
+        Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                'Devices',
+                style: theme.textTheme.titleLarge,
+              ),
+              TextButton(
+                onPressed: () => Get.to(() => const DevicesPage()),
+                child: const Text('View All'),
+              ),
+            ],
+          ),
+        ),
+        _buildDeviceSection(controller, theme),
+      ],
     );
   }
 
@@ -153,6 +131,7 @@ class HomePage extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Card(
+            elevation: 4,
             child: Padding(
               padding: const EdgeInsets.all(16.0),
               child: Column(
@@ -180,19 +159,22 @@ class HomePage extends StatelessWidget {
           ),
           const SizedBox(height: 8),
           SizedBox(
-            height: 300,
+            height: 200,
             child: Obx(() => ListView.builder(
                   shrinkWrap: true,
                   physics: const ClampingScrollPhysics(),
                   itemCount: controller.clipboardHistory.length,
                   itemBuilder: (context, index) {
                     final item = controller.clipboardHistory[index];
-                    return ClipboardCard(
-                      item: item,
-                      onCopy: () => controller.copyToClipboard(item.content),
-                      onShare: () =>
-                          controller.shareWithConnectedDevices(item.content),
-                      onDelete: () => controller.removeFromHistory(index),
+                    return Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 4.0),
+                      child: ClipboardCard(
+                        item: item,
+                        onCopy: () => controller.copyToClipboard(item.content),
+                        onShare: () =>
+                            controller.shareWithConnectedDevices(item.content),
+                        onDelete: () => controller.removeFromHistory(index),
+                      ),
                     );
                   },
                 )),
@@ -209,6 +191,7 @@ class HomePage extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Card(
+            elevation: 4,
             child: Padding(
               padding: const EdgeInsets.all(16.0),
               child: Row(
@@ -236,7 +219,8 @@ class HomePage extends StatelessWidget {
             style: theme.textTheme.titleMedium,
           ),
           const SizedBox(height: 8),
-          Expanded(
+          SizedBox(
+            height: 150,
             child: Obx(() => controller.connectedDevices.isEmpty
                 ? Center(
                     child: Text(
@@ -245,15 +229,28 @@ class HomePage extends StatelessWidget {
                     ),
                   )
                 : ListView.builder(
+                    scrollDirection: Axis.horizontal,
                     itemCount: controller.connectedDevices.length,
                     itemBuilder: (context, index) {
                       final device = controller.connectedDevices[index];
                       return Card(
-                        child: ListTile(
-                          leading: const Icon(Icons.devices),
-                          title: Text(device.name),
-                          subtitle: Text(
-                              'Last seen: ${_formatDateTime(device.lastSeen)}'),
+                        elevation: 2,
+                        child: Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              const Icon(Icons.devices),
+                              Text(
+                                device.name,
+                                style: theme.textTheme.bodyMedium,
+                              ),
+                              Text(
+                                'Last seen: ${_formatDateTime(device.lastSeen)}',
+                                style: theme.textTheme.bodySmall,
+                              ),
+                            ],
+                          ),
                         ),
                       );
                     },

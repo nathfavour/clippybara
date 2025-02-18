@@ -19,11 +19,8 @@ class _DevicesPageState extends State<DevicesPage> {
   @override
   void initState() {
     super.initState();
-    // Start scanning on load
     _startScanning();
-    // Listen to newly discovered devices
     _discoveryService.onDeviceDiscovered.listen((deviceId) async {
-      // Create a DeviceInfo with a dummy name or query for additional details
       var device = DeviceInfo(
           id: deviceId,
           name: 'Device ${_discoveredDevices.length + 1}',
@@ -66,11 +63,13 @@ class _DevicesPageState extends State<DevicesPage> {
               if (_discoveredDevices.isEmpty) {
                 return const Center(child: Text('No devices found'));
               }
-              return ListView.builder(
+              return ListView.separated(
                 itemCount: _discoveredDevices.length,
+                separatorBuilder: (context, index) => const Divider(),
                 itemBuilder: (context, index) {
                   final device = _discoveredDevices[index];
                   return ListTile(
+                    leading: const Icon(Icons.devices),
                     title: Text(device.name),
                     subtitle: Text(device.id),
                     trailing: Row(
@@ -84,9 +83,17 @@ class _DevicesPageState extends State<DevicesPage> {
                         ),
                         const SizedBox(width: 8),
                         IconButton(
-                          icon: const Icon(Icons.star_border),
+                          icon: _favoritesManager.favorites
+                                  .any((fav) => fav.id == device.id)
+                              ? const Icon(Icons.star, color: Colors.amber)
+                              : const Icon(Icons.star_border),
                           onPressed: () {
-                            _favoritesManager.addFavorite(device);
+                            if (_favoritesManager.favorites
+                                .any((fav) => fav.id == device.id)) {
+                              _favoritesManager.removeFavorite(device.id);
+                            } else {
+                              _favoritesManager.addFavorite(device);
+                            }
                           },
                         ),
                       ],
@@ -108,6 +115,7 @@ class _DevicesPageState extends State<DevicesPage> {
                   return Padding(
                     padding: const EdgeInsets.all(8.0),
                     child: Chip(
+                      avatar: const Icon(Icons.star, color: Colors.amber),
                       label: Text(fav.name),
                       deleteIcon: const Icon(Icons.close),
                       onDeleted: () {

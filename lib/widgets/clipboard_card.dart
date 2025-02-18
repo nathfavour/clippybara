@@ -18,25 +18,29 @@ class ClipboardCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Card(
-      child: ListTile(
-        title: Text(item.content),
-        subtitle: Text(item.timestamp.toLocal().toString()),
-        trailing: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            IconButton(
-              icon: const Icon(Icons.copy),
-              onPressed: onCopy,
-            ),
-            IconButton(
-              icon: const Icon(Icons.share),
-              onPressed: onShare,
-            ),
-            IconButton(
-              icon: const Icon(Icons.delete),
-              onPressed: onDelete,
-            ),
-          ],
+      elevation: 2,
+      child: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: ListTile(
+          title: Text(item.content),
+          subtitle: Text(item.timestamp.toLocal().toString()),
+          trailing: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              IconButton(
+                icon: const Icon(Icons.copy),
+                onPressed: onCopy,
+              ),
+              IconButton(
+                icon: const Icon(Icons.share),
+                onPressed: onShare,
+              ),
+              IconButton(
+                icon: const Icon(Icons.delete),
+                onPressed: onDelete,
+              ),
+            ],
+          ),
         ),
       ),
     );
