@@ -14,16 +14,47 @@ class _HomePageState extends State<HomePage> {
   final ClipboardController controller = Get.find<ClipboardController>();
   int _currentIndex = 0;
 
-  final List<Widget> _pages = [];
-
   @override
   void initState() {
     super.initState();
-    // Initialize pages with modular widgets.
-    _pages.addAll([
+    // Remove page initialization here to avoid using BuildContext before ready.
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    // Build pages using context (inherited widgets available)
+    final pages = [
       _buildClipboardTab(),
       _buildDevicesTab(),
-    ]);
+    ];
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Clipybara'),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.settings),
+            onPressed: () => Get.to(() => const SettingsPage()),
+          ),
+        ],
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          // Optional: allow manual clipboard sharing.
+          // Otherwise, live sync works automatically.
+        },
+        child: const Icon(Icons.add),
+      ),
+      body: pages[_currentIndex],
+      bottomNavigationBar: BottomNavigationBar(
+        currentIndex: _currentIndex,
+        onTap: (i) => setState(() => _currentIndex = i),
+        items: const [
+          BottomNavigationBarItem(
+              icon: Icon(Icons.content_copy), label: 'Clipboard'),
+          BottomNavigationBarItem(icon: Icon(Icons.devices), label: 'Devices'),
+        ],
+      ),
+    );
   }
 
   Widget _buildClipboardTab() {
@@ -109,37 +140,5 @@ class _HomePageState extends State<HomePage> {
     if (diff.inHours < 1) return '${diff.inMinutes}m ago';
     if (diff.inDays < 1) return '${diff.inHours}h ago';
     return '${diff.inDays}d ago';
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Clipybara'),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.settings),
-            onPressed: () => Get.to(() => const SettingsPage()),
-          ),
-        ],
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          // Optional: allow manual clipboard sharing.
-          // Otherwise, live sync works automatically.
-        },
-        child: const Icon(Icons.add),
-      ),
-      body: _pages[_currentIndex],
-      bottomNavigationBar: BottomNavigationBar(
-        currentIndex: _currentIndex,
-        onTap: (i) => setState(() => _currentIndex = i),
-        items: const [
-          BottomNavigationBarItem(
-              icon: Icon(Icons.content_copy), label: 'Clipboard'),
-          BottomNavigationBarItem(icon: Icon(Icons.devices), label: 'Devices'),
-        ],
-      ),
-    );
   }
 }
