@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import '../controllers/favorites_manager.dart';
-import '../services/network_discovery_service.dart';
 import '../models/device_info.dart';
 
 class DevicesPage extends StatefulWidget {
