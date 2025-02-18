@@ -1,85 +1,52 @@
 import 'dart:async';
-import 'dart:io';
-import 'package:network_info_plus/network_info_plus.dart';
+import 'package:multicast_dns/multicast_dns.dart';
 import 'package:flutter/foundation.dart';
 
 class NetworkDiscoveryService {
   final StreamController<String> _controller =
       StreamController<String>.broadcast();
   Stream<String> get onDeviceDiscovered => _controller.stream;
-  static const int discoveryPort = 9000; // Port for UDP discovery
-  final NetworkInfo _networkInfo = NetworkInfo();
+  static const String _serviceType = '_clipybara._tcp.local';
+  MDnsClient? _mdnsClient;
 
   Future<void> initialize() async {
-    startListening();
+    await _startDiscovery();
   }
 
-  Future<void> startListening() async {
+  Future<void> _startDiscovery() async {
     try {
-      final String? wifiIP = await _networkInfo.getWifiIP();
-      if (wifiIP == null) {
-        if (kDebugMode) {
-          print("WiFi is not connected. Cannot start discovery.");
-        }
-        return;
-      }
+      _mdnsClient = MDnsClient();
+      await _mdnsClient!.start();
 
-      final InternetAddress listenAddress =
-          InternetAddress.anyIPv4; // Listen on all interfaces
-      final MulticastSocket socket =
-          await MulticastSocket.bind(listenAddress, discoveryPort);
-
-      socket.joinMulticast(InternetAddress('224.0.0.1')); // Multicast group
-
-      socket.listen((event) {
-        final datagram = socket.receive();
-        if (datagram != null) {
-          final message = String.fromCharCodes(datagram.data);
+      _mdnsClient!
+          .lookup<PtrResourceRecord>(
+              ResourceRecordQuery.serverPointer(_serviceType))
+          .listen((ptr) {
+        _mdnsClient!
+            .lookup<SrvResourceRecord>(
+                ResourceRecordQuery.service(ptr.domainName))
+            .listen((srv) {
           if (kDebugMode) {
-            print('Received: ${message} from ${datagram.address.address}');
+            print('Found device: ${srv.target} at ${srv.target}:${srv.port}');
           }
-          _controller.add(datagram.address.address); // Use IP as device ID
-        }
+          _controller.add(srv.target); // Use hostname as device ID
+        });
       });
-
-      if (kDebugMode) {
-        print('Listening for UDP broadcasts on port $discoveryPort');
-      }
     } catch (e) {
       if (kDebugMode) {
-        print('Error starting UDP listener: $e');
+        print('Error starting mDNS discovery: $e');
       }
     }
   }
 
   Future<void> manualScan() async {
-    // Broadcast a UDP message to discover devices
-    String? wifiIP = await _networkInfo.getWifiIP();
-    if (wifiIP == null) {
-      if (kDebugMode) {
-        print("WiFi is not connected. Cannot start manual scan.");
-      }
-      return;
-    }
-
-    try {
-      final Socket socket = await Socket.connect(
-          '255.255.255.255', discoveryPort); // Broadcast address
-      final message = "CLIPYBARA_DISCOVERY"; // Simple discovery message
-      socket.write(message);
-      await socket.flush();
-      await socket.close();
-      if (kDebugMode) {
-        print('Sent UDP discovery message');
-      }
-    } catch (e) {
-      if (kDebugMode) {
-        print('Error sending UDP broadcast: $e');
-      }
-    }
+    // For mDNS, a manual scan is the same as the regular discovery
+    await _startDiscovery();
   }
 
   void dispose() {
+    _mdnsClient?.stop();
+    _mdnsClient = null;
     _controller.close();
   }
 }
