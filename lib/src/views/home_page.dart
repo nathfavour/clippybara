@@ -30,8 +30,8 @@ class _HomePageState extends State<HomePage> {
     final theme = Theme.of(context);
     return RefreshIndicator(
       onRefresh: () async {
-        // For live sync, trigger clipboard check (auto-sync is enabled)
-        await controller.copyToClipboard(controller.clipboardContent);
+        controller.copyToClipboard(controller.clipboardContent);
+        return; // ensure a Future<void> is returned.
       },
       child: ListView(
         padding: const EdgeInsets.all(16.0),
