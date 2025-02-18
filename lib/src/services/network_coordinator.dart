@@ -6,7 +6,6 @@ import 'package:flutter/foundation.dart';
 import '../models/network_info.dart';
 import '../models/device_info.dart';
 import '../models/clipboard_data.dart';
-import '../utils/encryption_helper.dart';
 
 class NetworkCoordinator {
   static const int _basePort = 8080;
@@ -14,21 +13,9 @@ class NetworkCoordinator {
   static const Duration _scanTimeout = Duration(seconds: 5);
   static const String _appIdentifier = 'CLIPYBARA_NET_V1';
 
-  final EncryptionHelper _encryption = EncryptionHelper();
   final Map<String, DeviceInfo> _connectedDevices = {};
   ServerSocket? _serverSocket;
   Timer? _discoveryTimer;
-
-  final StreamController<Map<String, DeviceInfo>> _devicesController =
-      StreamController<Map<String, DeviceInfo>>.broadcast();
-
-  final StreamController<ClipboardItem> _clipboardDataController =
-      StreamController<ClipboardItem>.broadcast();
-
-  Stream<Map<String, DeviceInfo>> get devicesStream =>
-      _devicesController.stream;
-  Stream<ClipboardItem> get clipboardDataStream =>
-      _clipboardDataController.stream;
 
   Future<void> initialize() async {
     await startServer();
@@ -69,8 +56,7 @@ class NetworkCoordinator {
 
   Future<void> _handleIncomingConnection(Socket socket, List<int> data) async {
     try {
-      final decrypted = await _encryption.decrypt(data);
-      final message = json.decode(decrypted);
+      final message = json.decode(String.fromCharCodes(data));
 
       if (message['identifier'] != _appIdentifier) {
         socket.close();
@@ -81,7 +67,6 @@ class NetworkCoordinator {
         case 'HELLO':
           final deviceInfo = DeviceInfo.fromJson(message['device']);
           _connectedDevices[deviceInfo.id] = deviceInfo;
-          _devicesController.add(Map.from(_connectedDevices));
 
           final response = {
             'type': 'WELCOME',
@@ -90,13 +75,12 @@ class NetworkCoordinator {
             'devices': _connectedDevices.values.map((d) => d.toJson()).toList(),
           };
 
-          final encrypted = await _encryption.encrypt(json.encode(response));
-          socket.add(encrypted);
+          socket.add(utf8.encode(json.encode(response)));
           break;
 
         case 'CLIPBOARD_DATA':
           final clipboardItem = ClipboardItem.fromJson(message['data']);
-          _clipboardDataController.add(clipboardItem);
+          // Handle clipboard data (e.g., update local clipboard)
           break;
       }
     } catch (e) {
@@ -118,7 +102,6 @@ class NetworkCoordinator {
     socket.close();
     // Remove device from connected list
     _connectedDevices.removeWhere((_, device) => device.socket == socket);
-    _devicesController.add(Map.from(_connectedDevices));
   }
 
   Future<Map<String, dynamic>> _getCurrentNetworkInfo() async {
@@ -151,8 +134,7 @@ class NetworkCoordinator {
           'device': await DeviceInfo.current(),
         };
 
-        final encrypted = await _encryption.encrypt(json.encode(hello));
-        socket.add(encrypted);
+        socket.add(utf8.encode(json.encode(hello)));
 
         await socket.close();
       } catch (_) {
@@ -201,18 +183,16 @@ class NetworkCoordinator {
       'data': data.toJson(),
     };
 
-    final encrypted = await _encryption.encrypt(json.encode(message));
+    final encoded = utf8.encode(json.encode(message));
 
     for (var device in _connectedDevices.values) {
-      device.socket?.add(encrypted);
+      device.socket?.add(encoded);
     }
   }
 
   void dispose() {
     _serverSocket?.close();
     _discoveryTimer?.cancel();
-    _devicesController.close();
-    _clipboardDataController.close();
     for (var device in _connectedDevices.values) {
       device.socket?.close();
     }

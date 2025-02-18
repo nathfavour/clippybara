@@ -15,19 +15,7 @@ class Helpers {
     if (Platform.isAndroid || Platform.isIOS) {
       var permissions = <Permission>[
         Permission.location,
-        Permission.storage,
-        Permission.notification,
       ];
-
-      // Add Nearby Devices permission for Android 12 and above
-      if (Platform.isAndroid) {
-        final androidInfo = await _deviceInfo.androidInfo;
-        if (androidInfo.version.sdkInt >= 31) {
-          permissions.add(Permission.nearbyWifiDevices);
-          permissions.add(Permission.bluetoothScan);
-          permissions.add(Permission.bluetoothConnect);
-        }
-      }
 
       // Request all required permissions
       Map<Permission, PermissionStatus> statuses = await permissions.request();

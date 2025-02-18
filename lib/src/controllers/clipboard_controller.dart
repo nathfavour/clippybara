@@ -2,7 +2,6 @@ import 'package:get/get.dart';
 import 'package:flutter/services.dart';
 import '../services/connectivity_service.dart';
 import '../services/wifi_service.dart';
-import '../services/network_discovery_service.dart';
 import '../models/clipboard_data.dart' as app;
 import '../utils/helpers.dart';
 import 'dart:async';
@@ -10,29 +9,20 @@ import 'dart:io' show Platform;
 
 class ClipboardController extends GetxController {
   final _clipboardContent = ''.obs;
-  final _connectedDevices = <DeviceInfo>[].obs;
-  final _isSharing = true.obs; // Default to true for automatic sync
+  final _isSharing = true.obs;
   final _useWifi = true.obs;
   final _syncEnabled = true.obs;
-  final _autoConnect = true.obs;
-  final _notificationsEnabled = true.obs;
   final _clipboardHistory = <app.ClipboardItem>[].obs;
-  final _lastSyncTime = Rx<DateTime?>(null);
 
-  final NetworkDiscoveryService _discoveryService = NetworkDiscoveryService();
   final ConnectivityService _connectivityService = ConnectivityService();
   final WifiService _wifiService = WifiService();
   Timer? _clipboardCheckTimer;
 
   String get clipboardContent => _clipboardContent.value;
-  List<DeviceInfo> get connectedDevices => _connectedDevices;
   bool get isSharing => _isSharing.value;
   bool get useWifi => _useWifi.value;
   bool get syncEnabled => _syncEnabled.value;
-  bool get autoConnect => _autoConnect.value;
-  bool get notificationsEnabled => _notificationsEnabled.value;
   List<app.ClipboardItem> get clipboardHistory => _clipboardHistory;
-  DateTime? get lastSyncTime => _lastSyncTime.value;
 
   @override
   void onInit() {
@@ -42,10 +32,7 @@ class ClipboardController extends GetxController {
   }
 
   Future<void> _initializeServices() async {
-    await _discoveryService.initialize();
-    _discoveryService.onDeviceDiscovered.listen(_handleDeviceDiscovered);
-
-    if (_autoConnect.value) {
+    if (_syncEnabled.value) {
       await startSharing();
     }
 
@@ -102,18 +89,6 @@ class ClipboardController extends GetxController {
     if (Platform.isAndroid || Platform.isIOS) {
       await _connectivityService.sendData(data);
     }
-    _lastSyncTime.value = DateTime.now();
-  }
-
-  void _handleDeviceDiscovered(String deviceId) {
-    final deviceInfo = DeviceInfo(
-      id: deviceId,
-      name: 'Device ${_connectedDevices.length + 1}',
-      lastSeen: DateTime.now(),
-    );
-    if (!_connectedDevices.any((device) => device.id == deviceId)) {
-      _connectedDevices.add(deviceInfo);
-    }
   }
 
   Future<void> startSharing() async {
@@ -136,15 +111,11 @@ class ClipboardController extends GetxController {
     }
   }
 
-  void setAutoConnect(bool value) {
-    _autoConnect.value = value;
-  }
-
   void setSyncEnabled(bool value) {
     _syncEnabled.value = value;
     if (!value) {
       stopSharing();
-    } else if (_autoConnect.value) {
+    } else {
       startSharing();
     }
   }
@@ -157,56 +128,9 @@ class ClipboardController extends GetxController {
     }
   }
 
-  void setNotificationsEnabled(bool value) {
-    _notificationsEnabled.value = value;
-  }
-
-  void clearHistory() {
-    _clipboardHistory.clear();
-  }
-
-  // Add missing public methods used by HomePage
-  void addClipboardItem(String text) async {
-    _clipboardContent.value = text;
-    _addToHistory(text);
-    if (_syncEnabled.value) {
-      await _syncClipboard();
-    }
-  }
-
-  void shareWithConnectedDevices(String text) async {
-    _clipboardContent.value = text;
-    if (_syncEnabled.value) {
-      await _syncClipboard();
-    }
-  }
-
-  void copyToClipboard(String text) {
-    Clipboard.setData(ClipboardData(text: text));
-  }
-
-  void removeFromHistory(int index) {
-    if (index >= 0 && index < _clipboardHistory.length) {
-      _clipboardHistory.removeAt(index);
-    }
-  }
-
   @override
   void onClose() {
     _clipboardCheckTimer?.cancel();
-    _discoveryService.dispose();
     super.onClose();
   }
-}
-
-class DeviceInfo {
-  final String id;
-  final String name;
-  final DateTime lastSeen;
-
-  DeviceInfo({
-    required this.id,
-    required this.name,
-    required this.lastSeen,
-  });
 }
