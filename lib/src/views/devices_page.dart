@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../models/device_info.dart';
+import '../services/network_discovery_service.dart';
+import '../controllers/favorites_manager.dart';
 
 class DevicesPage extends StatefulWidget {
   const DevicesPage({super.key});
