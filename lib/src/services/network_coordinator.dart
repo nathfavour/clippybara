@@ -6,10 +6,11 @@ import 'package:flutter/foundation.dart';
 import '../models/network_info.dart';
 import '../models/device_info.dart';
 import '../models/clipboard_data.dart';
+import '../utils/helpers.dart';
 
 class NetworkCoordinator {
   static const int _basePort = 8080;
-  static const int _maxPortScan = 10; // Will try ports 8080-8089
+  static const int _maxPortScan = 10;
   static const Duration _scanTimeout = Duration(seconds: 5);
   static const String _appIdentifier = 'CLIPYBARA_NET_V1';
 
@@ -21,7 +22,6 @@ class NetworkCoordinator {
   Future<void> initialize() async {
     await startServer();
     _startPeriodicDiscovery();
-    // Start periodic hello broadcast every 10 seconds.
     _helloTimer?.cancel();
     _helloTimer = Timer.periodic(const Duration(seconds: 10), (_) async {
       await broadcastHello();
@@ -34,7 +34,6 @@ class NetworkCoordinator {
         _serverSocket = await ServerSocket.bind(
           InternetAddress.anyIPv4,
           port,
-          // removed unsupported name parameters
         );
         if (kDebugMode) {
           print('Server started on port $port');
@@ -52,9 +51,12 @@ class NetworkCoordinator {
 
   void _listenToConnections() {
     _serverSocket?.listen((socket) {
+      if (kDebugMode) {
+        print('New connection: ${socket.remoteAddress.address}');
+      }
       socket.listen(
         (data) => _handleIncomingConnection(socket, data),
-        onError: (error) => _handleSocketError(socket, error),
+        onError: (error) => _handleSocketError(socket, error, socket),
         onDone: () => _handleDisconnection(socket),
       );
     });
@@ -72,7 +74,11 @@ class NetworkCoordinator {
       switch (message['type']) {
         case 'HELLO':
           final deviceInfo = DeviceInfo.fromJson(message['device']);
+          deviceInfo.socket = socket; // Store the socket
           _connectedDevices[deviceInfo.id] = deviceInfo;
+          if (kDebugMode) {
+            print('Device connected: ${deviceInfo.name}');
+          }
 
           final response = {
             'type': 'WELCOME',
@@ -87,17 +93,21 @@ class NetworkCoordinator {
         case 'CLIPBOARD_DATA':
           final clipboardItem = ClipboardItem.fromJson(message['data']);
           // Handle clipboard data (e.g., update local clipboard)
+          if (kDebugMode) {
+            print(
+                'Received clipboard data: ${clipboardItem.content} from ${socket.remoteAddress.address}');
+          }
           break;
       }
     } catch (e) {
       if (kDebugMode) {
         print('Error handling connection: $e');
       }
-      socket.close();
+      _handleSocketError(socket, e, socket);
     }
   }
 
-  void _handleSocketError(Socket socket, dynamic error) {
+  void _handleSocketError(Socket socket, dynamic error, Socket s) {
     if (kDebugMode) {
       print('Socket error: $error');
     }
@@ -105,13 +115,14 @@ class NetworkCoordinator {
   }
 
   void _handleDisconnection(Socket socket) {
+    if (kDebugMode) {
+      print('Device disconnected: ${socket.remoteAddress.address}');
+    }
     socket.close();
-    // Remove device from connected list
     _connectedDevices.removeWhere((_, device) => device.socket == socket);
   }
 
   Future<Map<String, dynamic>> _getCurrentNetworkInfo() async {
-    // Get current network details
     return {
       'port': _serverSocket?.port ?? _basePort,
       'deviceCount': _connectedDevices.length,
@@ -126,60 +137,7 @@ class NetworkCoordinator {
   }
 
   Future<void> _scanForNetworks() async {
-    final networks = <NetworkInfo>[];
-
-    for (int port = _basePort; port < _basePort + _maxPortScan; port++) {
-      try {
-        final socket = await Socket.connect('255.255.255.255', port,
-            timeout: _scanTimeout);
-
-        // Send hello message
-        final hello = {
-          'type': 'HELLO',
-          'identifier': _appIdentifier,
-          'device': await DeviceInfo.current(),
-        };
-
-        socket.add(utf8.encode(json.encode(hello)));
-
-        await socket.close();
-      } catch (_) {
-        // Port scan timeout or error - continue to next port
-        continue;
-      }
-    }
-
-    // Analyze networks and potentially migrate
-    _evaluateNetworkMigration(networks);
-  }
-
-  Future<void> _evaluateNetworkMigration(List<NetworkInfo> networks) async {
-    if (networks.isEmpty) return;
-
-    // Find network with most devices
-    final bestNetwork =
-        networks.reduce((a, b) => a.deviceCount > b.deviceCount ? a : b);
-
-    // If we find a better network, migrate
-    if (bestNetwork.deviceCount > _connectedDevices.length) {
-      await _migrateToNetwork(bestNetwork);
-    }
-  }
-
-  Future<void> _migrateToNetwork(NetworkInfo network) async {
-    // Close current server
-    await _serverSocket?.close();
-    _serverSocket = null;
-
-    // Connect to new network
-    try {
-      final socket = await Socket.connect(network.address, network.port);
-      _handleIncomingConnection(socket, []); // Initialize connection
-    } catch (e) {
-      print('Migration failed: $e');
-      // Restart own server as fallback
-      await startServer();
-    }
+    // No network migration for now
   }
 
   Future<void> broadcastClipboardData(ClipboardItem data) async {
@@ -192,12 +150,18 @@ class NetworkCoordinator {
     final encoded = utf8.encode(json.encode(message));
 
     for (var device in _connectedDevices.values) {
-      device.socket?.add(encoded);
+      try {
+        device.socket?.add(encoded);
+      } catch (e) {
+        if (kDebugMode) {
+          print('Error sending data to ${device.name}: $e');
+        }
+        _handleDisconnection(device.socket!);
+      }
     }
   }
 
   Future<void> broadcastHello() async {
-    // Build hello message including current device info.
     final device = await DeviceInfo.current();
     final hello = {
       'type': 'HELLO',
@@ -205,12 +169,30 @@ class NetworkCoordinator {
       'device': device.toJson(),
     };
     final encoded = utf8.encode(json.encode(hello));
-    // Send hello message on all available connections.
+
+    // Send hello to all known devices
     for (var device in _connectedDevices.values) {
-      device.socket?.add(encoded);
+      try {
+        device.socket?.add(encoded);
+      } catch (e) {
+        if (kDebugMode) {
+          print('Error sending hello to ${device.name}: $e');
+        }
+        _handleDisconnection(device.socket!);
+      }
     }
-    // Optionally, log the broadcast.
-    if (kDebugMode) print('Broadcasted HELLO: ${device.name}');
+
+    // Also, broadcast to the network
+    for (int port = _basePort; port < _basePort + _maxPortScan; port++) {
+      try {
+        final socket = await Socket.connect('255.255.255.255', port,
+            timeout: _scanTimeout);
+        socket.add(encoded);
+        await socket.close();
+      } catch (e) {
+        // Ignore errors during broadcast
+      }
+    }
   }
 
   void dispose() {

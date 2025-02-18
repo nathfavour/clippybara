@@ -7,6 +7,7 @@ import '../utils/helpers.dart';
 import 'dart:async';
 import 'dart:io' show Platform;
 import '../models/device_info.dart';
+import '../services/network_discovery_service.dart';
 
 class ClipboardController extends GetxController {
   final _clipboardContent = ''.obs;
@@ -20,6 +21,8 @@ class ClipboardController extends GetxController {
 
   final ConnectivityService _connectivityService = ConnectivityService();
   final WifiService _wifiService = WifiService();
+  final NetworkDiscoveryService _networkDiscoveryService =
+      NetworkDiscoveryService();
   Timer? _clipboardCheckTimer;
 
   String get clipboardContent => _clipboardContent.value;
@@ -36,6 +39,7 @@ class ClipboardController extends GetxController {
     super.onInit();
     _initializeServices();
     _startClipboardMonitoring();
+    _startDeviceDiscovery();
   }
 
   Future<void> _initializeServices() async {
@@ -43,7 +47,6 @@ class ClipboardController extends GetxController {
       await startSharing();
     }
 
-    // Start monitoring clipboard
     await _checkClipboard();
   }
 
@@ -77,7 +80,6 @@ class ClipboardController extends GetxController {
     );
     _clipboardHistory.insert(0, newData);
     if (_clipboardHistory.length > 50) {
-      // Keep last 50 items
       _clipboardHistory.removeLast();
     }
   }
@@ -135,7 +137,6 @@ class ClipboardController extends GetxController {
     }
   }
 
-  // Add missing public methods used by HomePage
   void addClipboardItem(String text) async {
     _clipboardContent.value = text;
     _addToHistory(text);
@@ -171,6 +172,18 @@ class ClipboardController extends GetxController {
 
   void clearHistory() {
     _clipboardHistory.clear();
+  }
+
+  void _startDeviceDiscovery() async {
+    await _networkDiscoveryService.initialize();
+    _networkDiscoveryService.onDeviceDiscovered.listen((deviceId) {
+      if (!_connectedDevices.any((device) => device.id == deviceId)) {
+        Helpers.getDeviceName().then((deviceName) {
+          final newDevice = DeviceInfo(id: deviceId, name: deviceName);
+          _connectedDevices.add(newDevice);
+        });
+      }
+    });
   }
 
   @override

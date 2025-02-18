@@ -5,7 +5,7 @@ class DeviceInfo {
   final String id;
   final String name;
   final DateTime lastSeen;
-  final Socket? socket;
+  Socket? socket; // Make socket non-final
 
   DeviceInfo({
     required this.id,

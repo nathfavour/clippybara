@@ -17,12 +17,10 @@ class _HomePageState extends State<HomePage> {
   @override
   void initState() {
     super.initState();
-    // Remove page initialization here to avoid using BuildContext before ready.
   }
 
   @override
   Widget build(BuildContext context) {
-    // Build pages using context (inherited widgets available)
     final pages = [
       _buildClipboardTab(),
       _buildDevicesTab(),
@@ -38,10 +36,7 @@ class _HomePageState extends State<HomePage> {
         ],
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          // Optional: allow manual clipboard sharing.
-          // Otherwise, live sync works automatically.
-        },
+        onPressed: () {},
         child: const Icon(Icons.add),
       ),
       body: pages[_currentIndex],
@@ -62,7 +57,7 @@ class _HomePageState extends State<HomePage> {
     return RefreshIndicator(
       onRefresh: () async {
         controller.copyToClipboard(controller.clipboardContent);
-        return; // ensure a Future<void> is returned.
+        return;
       },
       child: ListView(
         padding: const EdgeInsets.all(16.0),
@@ -91,9 +86,7 @@ class _HomePageState extends State<HomePage> {
                   final item = controller.clipboardHistory[index];
                   return Padding(
                     padding: const EdgeInsets.symmetric(vertical: 4.0),
-                    // Reuse existing ClipboardCard widget.
-                    child: /* ...existing ClipboardCard code... */ Container(
-                      // Replace with your ClipboardCard widget.
+                    child: Container(
                       child: Text(item.content),
                     ),
                   );
@@ -108,9 +101,7 @@ class _HomePageState extends State<HomePage> {
     final theme = Theme.of(context);
     return Obx(() {
       return RefreshIndicator(
-        onRefresh: () async {
-          // Optionally trigger a rediscovery.
-        },
+        onRefresh: () async {},
         child: controller.connectedDevices.isEmpty
             ? Center(
                 child: Text('No devices connected',

@@ -35,6 +35,12 @@ class _DevicesPageState extends State<DevicesPage> {
     await _discoveryService.initialize();
   }
 
+  Future<void> _manualScan() async {
+    _discoveredDevices.clear();
+    await _startScanning();
+    await _discoveryService.manualScan();
+  }
+
   @override
   void dispose() {
     _discoveryService.dispose();
@@ -50,8 +56,7 @@ class _DevicesPageState extends State<DevicesPage> {
           IconButton(
             icon: const Icon(Icons.refresh),
             onPressed: () async {
-              _discoveredDevices.clear();
-              await _startScanning();
+              await _manualScan();
             },
           )
         ],
