@@ -27,7 +27,7 @@ class _HomePageState extends State<HomePage> {
     ];
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Clipybara'),
+        title: const Text('Clippybara'),
         actions: [
           IconButton(
             icon: const Icon(Icons.settings),

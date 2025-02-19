@@ -27,7 +27,7 @@ class ClipybaraApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GetMaterialApp(
-      title: 'Clipybara',
+      title: 'Clippybara',
       theme: AppTheme.lightTheme,
       darkTheme: AppTheme.darkTheme,
       home: const HomePage(),
