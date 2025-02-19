@@ -36,7 +36,39 @@ class _HomePageState extends State<HomePage> {
         ],
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: () {},
+        onPressed: () {
+          showDialog(
+            context: context,
+            builder: (context) {
+              final TextEditingController textController =
+                  TextEditingController();
+              return AlertDialog(
+                title: const Text('Add to Clipboard'),
+                content: TextField(
+                  controller: textController,
+                  decoration: const InputDecoration(
+                    hintText: 'Enter text',
+                  ),
+                ),
+                actions: [
+                  TextButton(
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
+                    child: const Text('Cancel'),
+                  ),
+                  TextButton(
+                    onPressed: () {
+                      controller.copyToClipboard(textController.text);
+                      Navigator.of(context).pop();
+                    },
+                    child: const Text('Add'),
+                  ),
+                ],
+              );
+            },
+          );
+        },
         child: const Icon(Icons.add),
       ),
       body: pages[_currentIndex],
