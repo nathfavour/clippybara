@@ -57,7 +57,6 @@ class NetworkDiscoveryService {
   }
 
   Future<void> manualScan() async {
-    // Broadcast a UDP message to discover devices
     String? wifiIP = await _networkInfo.getWifiIP();
     if (wifiIP == null) {
       if (kDebugMode) {
@@ -67,14 +66,20 @@ class NetworkDiscoveryService {
     }
 
     try {
-      final RawDatagramSocket socket =
-          await RawDatagramSocket.bind(InternetAddress.anyIPv4, 0);
-      socket.broadcast = true;
-      final message = "CLIPYBARA_DISCOVERY"; // Simple discovery message
+      final socket = await RawDatagramSocket.bind(
+        InternetAddress.anyIPv4,
+        0,
+        reuseAddress: true,
+        reusePort: true,
+        ttl: 255,
+      );
+
+      final message = "CLIPYBARA_DISCOVERY";
       List<int> data = message.codeUnits;
-      final recipient = InternetAddress('255.255.255.255'); // Broadcast address
+      final recipient = InternetAddress('255.255.255.255');
       socket.send(data, recipient, discoveryPort);
       socket.close();
+
       if (kDebugMode) {
         print('Sent UDP discovery message');
       }
